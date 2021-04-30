@@ -1,5 +1,23 @@
 # cs375-pdf-sharing-sigining-platform
 
-- Final Project for CS375
+Final Project for CS375
 
-+ Online PDF Sigining Platform.
+Group Name: RapidSign
+
+Online PDF Sigining Platform
+
+
+## Development
+
+```bash
+$ npm run client 
+$ npm run server
+```
+
+## Production 
+```bash
+git add . 
+git commit -m "Deploy to Heroku" 
+git push heroku master
+```
+
