@@ -1,5 +1,6 @@
 import React from 'react';
 import "./HandleDocument.css"
+const axios = require("axios");
 
 class HandleDocument extends React.Component {
     constructor(props) {
@@ -12,11 +13,13 @@ class HandleDocument extends React.Component {
         this.state = {
             fileType: defaultFileType,
             fileDownloadUrl: null,
-            status: ""
+            status: "No upload"
         }
         this.download = this.download.bind(this);
-        this.upload = this.upload.bind(this);
-        this.openFile = this.openFile.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
+        this.validateSize = this.validateSize.bind(this);
+        this.onChangeHandler = this.onChangeHandler.bind(this);
+
     }
 
     download(event) {
@@ -38,57 +41,72 @@ class HandleDocument extends React.Component {
             })
     }
 
+    onChangeHandler(event) {
+        var file = event.target.files[0];
+        let UPLOAD_URL = "http://localhost:5000/v1/files";
+        if (this.validateSize(event)) {
+            this.setState({ status: "In progress...." });
+            // if return true allow to setState
+            const data = new FormData()
+            data.append('file', file)
+            axios.post(UPLOAD_URL, data)
+                .then(res => { // then print response status
+                    this.setState({ status: "Upload successfull" });
+                    console.log('Upload is successful.', res);
+                })
+                .catch(err => { // then print response status
+                    this.setState({ status: "Upload failed. Try again later." });
+                    console.log('Upload failed', err);
+                })
 
-    upload() {
-        this.dofileUpload.click()
-    }
 
-    /**
-     * Process the file within the React app. We're NOT uploading it to the server!
-     */
-    openFile(evt) {
-        let status = []; // Status output
-        const fileObj = evt.target.files[0];
-        const reader = new FileReader();
 
-        let fileloaded = e => {
-            // e.target.result is the file's content as text
-            const fileContents = e.target.result;
-            status.push(`File name: "${fileObj.name}". Length: ${fileContents.length} bytes.`);
-            // Show first 80 characters of the file
-            const first80char = fileContents.substring(0, 80);
-            status.push(`First 80 characters of the file:\n${first80char}`)
-            this.setState({ status: status.join("\n") })
         }
-
-        // Mainline of the method
-        fileloaded = fileloaded.bind(this);
-        reader.onload = fileloaded;
-        reader.readAsText(fileObj);
     }
 
+    validateSize(event) {
+        let file = event.target.files[0];
+        let size = 30000;
+        let err = '';
+        console.log(file.size);
+        if (file.size > size) {
+            err = file.type + 'is too large, please pick a smaller file\n';
+            console.log(err);
+        }
+        return true
+    };
+
+    uploadFile(evt) {
+        var formdata = new FormData();
+        formdata.append("file", evt.target.files[0]);
+        let UPLOAD_URL = "http://localhost:5000/v1/files";
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch(UPLOAD_URL, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                this.setState({ status: "Upload successfull." });
+                console.log(result)
+            })
+            .catch(error => {
+                this.setState({ status: "Upload failed. Try again later." });
+                console.log('error', error)
+            });
+    }
     render() {
         return (
             <div>
-                <h2>Upload your document</h2>
-                <form>
-
-                    <a className="hidden"
-                        download={this.fileNames[this.state.fileType]}
-                        href={this.state.fileDownloadUrl}
-                        ref={e => this.dofileDownload = e}
-                    >download it</a>
-
-                    <p><button onClick={this.upload}>
-                        Upload a file!
-                    </button> Only pdf files are ok.</p>
-
-                    <input type="file" className="hidden"
-                        multiple={false}
-                        accept=".pdf,application/json"
-                        onChange={evt => this.openFile(evt)}
-                        ref={e => this.dofileUpload = e}
-                    />
+                <form method="post" action="#" id="#">
+                    <p>Upload Your Document:</p>
+                    <input width="100%" type="file" name="file" onChange={this.onChangeHandler} />
+                    {/* <div>
+                        <button width="100%" type="button" onClick={this.fileUploadHandler}>Upload File</button>
+                    </div> */}
                 </form>
                 <pre className="status">{this.state.status}</pre>
             </div>
