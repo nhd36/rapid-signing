@@ -1,4 +1,4 @@
-# cs375-pdf-sharing-sigining-platform
+# rapid-signing
 
 Final Project for CS375
 
