@@ -4,11 +4,11 @@ Final Project for CS375
 
 Group Name: RapidSign
 
-Online PDF Sigining Platform
+Online PDF Signing Platform
 
 
 ## Development
-
+Do `npm install` inside the client and the server folders just once.
 ```bash
 $ npm run client 
 $ npm run server
