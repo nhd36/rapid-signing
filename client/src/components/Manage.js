@@ -1,8 +1,8 @@
 import React from 'react';
-import "./HandleDocument.css"
+import "./Manage.css"
 const axios = require("axios");
 
-class HandleDocument extends React.Component {
+class Manage extends React.Component {
     constructor(props) {
         super(props)
 
@@ -101,17 +101,54 @@ class HandleDocument extends React.Component {
     render() {
         return (
             <div>
-                <form method="post" action="#" id="#">
-                    <p>Upload Your Document:</p>
-                    <input width="100%" type="file" name="file" onChange={this.onChangeHandler} />
-                    {/* <div>
+                <div className="navigation-bar">
+                    <ul>
+                        <li><a href="/">| Home </a></li>
+                        <li><a href="">| Hi @user123 </a></li>
+                        <li><a href="/logout">| Logout |</a></li>
+                    </ul>
+                </div>
+
+                <div className="my-documents">
+                    <header className="">
+                        <p> 🚀 RapidSign 🚀<br></br> Blazingly Fast and Secure Document Signing Platform</p>
+                    </header>
+
+                    <h2>My Documents 📝</h2>
+                    <p>You can see all the documents you created or received here.</p>
+                    <table id="my-documents">
+                        <thead>
+                            <tr><th>Name</th><th>Description</th><th>URL</th><th>Created at</th><th>Last Modified</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div id="my-documents-list">⚠️ No documents created/received for this user ⚠️</div>
+
+                    <hr class="rounded" />
+                    <h2>Create New Document ✏️</h2>
+                    <p>You can upload a document here so that others can sign it.</p>
+                    <div className="upload-form-container">
+                        <form method="post" action="#" id="#">
+                            <span class="label-holder"><label for="name">File Name:</label></span>
+                            <span class="input-holder"><input type="text" id="name" name="name" placeholder="File Name" /></span>
+
+                            <span class="label-holder"><label for="description">Description:</label></span>
+                            <span class="input-holder"><input type="text" id="description" name="description" placeholder="File Description" /></span>
+
+                            <span class="label-holder"><label for="file">File</label></span>
+                            <span class="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler}/></span>
+                            {/* <div>
                         <button width="100%" type="button" onClick={this.fileUploadHandler}>Upload File</button>
                     </div> */}
-                </form>
-                <pre className="status">{this.state.status}</pre>
+                        <span class="label-holder"><label for="status">Upload Status:</label></span>
+                        <span class="input-holder"><pre className="status">{this.state.status}</pre></span>
+                        </form>
+                        
+                    </div>
+                </div>
             </div>
         )
     }
 }
 
-export default HandleDocument;
+export default Manage;
