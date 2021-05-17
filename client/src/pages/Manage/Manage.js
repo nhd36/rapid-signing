@@ -1,4 +1,5 @@
 import React from 'react';
+import NavBar from '../../components/NavBar';
 import "./Manage.css"
 const axios = require("axios");
 
@@ -101,13 +102,7 @@ class Manage extends React.Component {
     render() {
         return (
             <div>
-                <div className="navigation-bar">
-                    <ul>
-                        <li><a href="/">| Home </a></li>
-                        <li><a href="">| Hi @user123 </a></li>
-                        <li><a href="/logout">| Logout |</a></li>
-                    </ul>
-                </div>
+                <NavBar/>
 
                 <div className="my-documents">
                     <header className="">
