@@ -21,14 +21,14 @@ function login(req, res) {
         return res.status(400).json({success: false, error:errors});
     }
 
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
 
     // Find user by username
-    User.findOne({ username }).then(user => {
+    User.findOne({ email }).then(user => {
         // Check if user exists
         if (!user) {
-            return res.status(404).json({ success: false, error: "Username not found" });
+            return res.status(404).json({ success: false, error: "Email not found" });
         }
 
         // Check password
@@ -38,7 +38,6 @@ function login(req, res) {
                 // Create JWT Payload
                 const payload = {
                     id: user._id,
-                    username: user.username,
                     email: user.email                    
                 };
 
