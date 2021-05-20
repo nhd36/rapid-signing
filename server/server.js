@@ -33,15 +33,6 @@ app.use(cors())
 // Passport config
 require("./config/passport")(passport);
 
-// Serve static assets (build folder) if in production	
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-  });
-}
-
 const port = process.env.PORT || 5000;
 
 // Database setup
@@ -153,6 +144,16 @@ app.get(`/api/${API_VERSION}/file/:filename`, (req, res) => {
 app.get(`/api/${API_VERSION}`, home);
 app.post(`/api/${API_VERSION}/login`, login);
 app.post(`/api/${API_VERSION}/register`, register);
+
+// Serve static assets (build folder) if in production	
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+  });
+}
+
 
 // Server run
 app.listen(port, () => {
