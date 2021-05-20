@@ -17,6 +17,13 @@ const register = require('./endpoints/register');
 // Server setup
 const app = express();
 
+
+// Serve static assets (build folder) if in production	
+if (process.env.NODE_ENV === "production") {	
+  app.use(serveStatic(path.join(__dirname, '..','client','dist')));
+}
+
+
 // Passport middleware
 app.use(passport.initialize());
 app.use(express.urlencoded({ extended: true }));
