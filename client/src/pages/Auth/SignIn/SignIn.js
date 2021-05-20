@@ -25,7 +25,7 @@ const handleClick = (email, password) => {
     console.log(email, password);
 }
 
-const SignIn = ({ setToken }) => {
+const SignIn = ({ auth }) => {
     const classes = useStyles();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();

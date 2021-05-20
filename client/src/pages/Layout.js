@@ -6,7 +6,7 @@ const useStyles = makeStyles({
         height: "100%",
         width: "100%"
     },
-    childComp: {
+    childLayout: {
         marginTop: "4em",
         display: "flex",
         justifyContent: "center"
@@ -18,7 +18,7 @@ const Layout = ({children}) => {
     return (
         <div className={classes.root}>
             <NavBar/>
-            <Box className={classes.childComp}>
+            <Box className={classes.childLayout}>
                 {children}
             </Box>
         </div>
