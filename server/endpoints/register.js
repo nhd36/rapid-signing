@@ -12,7 +12,6 @@ const User = require("../models/User");
 // @access Public
 function register(req, res) {
     // Form validation
-    console.log(req.body)
     const { errors, isValid } = validateRegisterInput(req.body);
 
     // Check validation
@@ -21,10 +20,9 @@ function register(req, res) {
     }
     let userInputEmail = req.body.email;
     let userInputPassword = req.body.password;
-
-    User.findOne({ userInputEmail }).then(user => {
+    User.findOne({ email: userInputEmail }).then(user => {
         if (user) {
-            return res.status(400).json({ success: false, error: "Username or email already taken." });
+            return res.status(400).json({ success: false, error: "Email already taken." });
         } else {
             const newUser = new User({
                 email: userInputEmail,
@@ -32,6 +30,7 @@ function register(req, res) {
             });
 
             // Hash password before saving in database
+            // Donot store the plaintext password.
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newUser.password, salt, (err, hash) => {
                     if (err) throw err;
