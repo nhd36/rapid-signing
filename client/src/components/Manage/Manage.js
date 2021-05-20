@@ -6,6 +6,13 @@ const axios = require("axios");
 class Manage extends React.Component {
     constructor(props) {
         super(props)
+        this.SERVER_URL = process.env.REACT_APP_SERVER_PATH;
+
+        this.SERVER_URL_FETCH_FILES = `${this.SERVER_URL}/api/v1/files`;
+        this.SERVER_URL_UPLOAD_FILE = `${this.SERVER_URL}/api/v1/upload`;
+        this.SERVER_URL_GET_FILE = `${this.SERVER_URL}/api/v1/file`;
+
+
         const defaultFileType = "pdf";
         this.uploadSuccessMessage = "Upload successfull!";
         this.uploadFailureMessage = "Upload failed. Try again later.";
@@ -25,9 +32,9 @@ class Manage extends React.Component {
 
     }
     componentDidMount() {
-        this.fetchApiToEntries('http://localhost:5000/api/v1/files');
+        this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES);
     }
-    fetchApiToEntries = (apiToFetch) => {
+    fetchApiToFiles = (apiToFetch) => {
         fetch(apiToFetch)
             .then(result => result.json())
             .then((files) => {
@@ -41,18 +48,17 @@ class Manage extends React.Component {
 
     uploadFile(event) {
         var file = event.target.files[0];
-        let UPLOAD_URL = "http://localhost:5000/api/v1/upload";
         if (this.validateSize(event)) {
             this.setState({ status: "In progress...." });
             // if return true allow to setState
             const data = new FormData()
             data.append('file', file)
-            axios.post(UPLOAD_URL, data)
+            axios.post(this.SERVER_URL_UPLOAD_FILE, data)
                 .then(res => { // then print response status
                     this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
                     this.setState({ uploadStatus: true });
                     console.log('Upload is successful.', res);
-                    this.fetchApiToEntries('http://localhost:5000/api/v1/files'); // get all documents that belong to user
+                    this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
                     this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
@@ -100,9 +106,8 @@ class Manage extends React.Component {
             method: 'GET',
             redirect: 'follow'
         };
-        let DOWNLOAD_URL = "http://localhost:5000/api/v1/file";
         let fileName = evt.target.fileName;
-        fetch(`${DOWNLOAD_URL}/${fileName}/`, requestOptions)
+        fetch(`${this.SERVER_URL_GET_FILE}/${fileName}/`, requestOptions)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error));
