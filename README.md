@@ -18,6 +18,6 @@ $ npm run server
 ```bash
 git add . 
 git commit -m "Deploy to Heroku" 
-git push heroku master
+git push heroku main
 ```
 

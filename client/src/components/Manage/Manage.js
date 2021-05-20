@@ -7,10 +7,13 @@ class Manage extends React.Component {
     constructor(props) {
         super(props)
         const defaultFileType = "pdf";
+        this.uploadSuccessMessage = "Upload successfull!";
+        this.uploadFailureMessage = "Upload failed. Try again later.";
         this.state = {
             fileType: defaultFileType,
             fileDownloadUrl: null,
-            status: "No upload",
+            uploadStatusMessage: "No upload",
+            uploadStatus: null,
             files: []
         }
         this.downloadFile = this.downloadFile.bind(this);
@@ -46,12 +49,14 @@ class Manage extends React.Component {
             data.append('file', file)
             axios.post(UPLOAD_URL, data)
                 .then(res => { // then print response status
-                    this.setState({ status: "Upload successfull" });
+                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
+                    this.setState({ uploadStatus: true });
                     console.log('Upload is successful.', res);
-                    this.fetchApiToEntries('http://localhost:5000/api/v1/files');
+                    this.fetchApiToEntries('http://localhost:5000/api/v1/files'); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
-                    this.setState({ status: "Upload failed. Try again later." });
+                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
+                    this.setState({ uploadStatus: false });
                     console.log('Upload failed', err);
                 })
         }
@@ -121,7 +126,7 @@ class Manage extends React.Component {
                         </tbody>
                     </table>
 
-                    <div id="my-documents-list" style={{visibility: this.state.files.length ? 'hidden' : 'visible' }}>⚠️ No documents created/received for this user ⚠️</div>
+                    <div id="my-documents-list" style={{ visibility: this.state.files.length ? 'hidden' : 'visible' }}>⚠️ No documents created/received for this user ⚠️</div>
 
                     <hr className="rounded" />
                     <h2>Create New Document ✏️</h2>
@@ -138,7 +143,7 @@ class Manage extends React.Component {
                             <span className="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.uploadFile} /></span>
 
                             <span className="label-holder"><label htmlFor="status">Upload Status:</label></span>
-                            <span className="input-holder"><pre className="status">{this.state.status}</pre></span>
+                            <span className="input-holder"><pre className="status" style={{ color: this.state.uploadStatus ? 'green' : 'red' }}>{this.state.uploadStatusMessage}</pre></span>
                         </form>
 
                     </div>
