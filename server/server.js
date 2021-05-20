@@ -19,8 +19,8 @@ const app = express();
 
 
 // Serve static assets (build folder) if in production	
-if (process.env.NODE_ENV === "production") {	
-  app.use(serveStatic(path.join(__dirname, '..','client','dist')));
+if (process.env.NODE_ENV === "production") {
+  app.use(serveStatic(path.join(__dirname, '..', 'client', 'dist')));
 }
 
 
@@ -41,17 +41,20 @@ if (process.env.NODE_ENV === "production") {
 const port = process.env.PORT || 5000;
 
 // Database setup
-const { MONGODB } = require('./config/keys.js');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: __dirname + '/../.env' });
+}
+
 
 // connection
-const conn = mongoose.createConnection(MONGODB, {
+const conn = mongoose.createConnection(process.env.MONGODB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 
 
 mongoose
-  .connect(MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('MongoDB Connected');
   })
@@ -70,7 +73,7 @@ conn.once("open", () => {
 
 // Storage
 const storage = new GridFsStorage({
-  url: MONGODB,
+  url: process.env.MONGODB,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
