@@ -35,7 +35,11 @@ require("./config/passport")(passport);
 
 // Serve static assets (build folder) if in production	
 if (process.env.NODE_ENV === "production") {
-  app.use(serveStatic(path.join(__dirname, '..', 'client', 'dist')));
+  app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+  });
 }
 
 const port = process.env.PORT || 5000;
