@@ -18,6 +18,8 @@ const app = express();
 
 // Passport middleware
 app.use(passport.initialize());
+app.use(express.urlencoded({extended: true}));
+app.use(express.json()) // To parse the incoming requests with JSON payloads
 
 // Passport config
 require("./config/passport")(passport);
@@ -39,14 +41,14 @@ const conn = mongoose.createConnection(MONGODB, {
 });
 
 
-// mongoose
-//   .connect(MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => {
-//     console.log('MongoDB Connected');
-//   })
-//   .catch(error => {
-//     console.log('MongoDB failed to connect with error:', error)
-//   })
+mongoose
+  .connect(MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('MongoDB Connected');
+  })
+  .catch(error => {
+    console.log('MongoDB failed to connect with error:', error)
+  })
 
 // init gfs
 let gfs;
@@ -87,7 +89,7 @@ let API_VERSION = "v1";
 // Source: https://github.com/shubhambattoo/node-js-file-upload/blob/master/app.js
 
 // get / page
-app.get(`/${API_VERSION}/`, (req, res) => {
+app.get(`/api/${API_VERSION}/`, (req, res) => {
   if (!gfs) {
     console.log("some error occured, check connection to db");
     res.send("some error occured, check connection to db");
@@ -125,12 +127,12 @@ app.get(`/${API_VERSION}/`, (req, res) => {
 
 
 // Post single file
-app.post(`/${API_VERSION}/upload`, upload.single("file"), (req, res) => {
+app.post(`/api/${API_VERSION}/upload`, upload.single("file"), (req, res) => {
   res.redirect(`/${API_VERSION}`);
 });
 
 // Get all files
-app.get(`/${API_VERSION}/files`, (req, res) => {
+app.get(`/api/${API_VERSION}/files`, (req, res) => {
   gfs.find().toArray((err, files) => {
     // check if files
     if (!files || files.length === 0) {
@@ -144,7 +146,7 @@ app.get(`/${API_VERSION}/files`, (req, res) => {
 });
 
 // Get specific files
-app.get(`/${API_VERSION}/files/:filename`, (req, res) => {
+app.get(`/api/${API_VERSION}/files/:filename`, (req, res) => {
   gfs.find(
     {
       filename: req.params.filename
