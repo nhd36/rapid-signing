@@ -102,3 +102,28 @@ div.upload-form-container span.input-holder {
 div.upload-form-container span.input-holder input[type="text"]{
   width: 100%;
 }
+
+#my-documents {
+  text-align: center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  border: 3px solid #ddd;
+  width: 100%;
+}
+
+#my-documents td, #students th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#my-documents tr:nth-child(even){background-color: #f2f2f2;}
+
+#my-documents tr:hover {background-color: #ddd;}
+
+#my-documents th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4CAF50;
+  color: white;
+}
