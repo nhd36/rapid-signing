@@ -1,54 +1,27 @@
-import './App.css';
+import Manage from "./pages/Manage/ManageTest"
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import SignIn from "./pages/Auth/SignIn/SignIn";
+import SignUp from "./pages/Auth/SignUp/SignUp";
+import { useToken } from './customizedHook/useToken';
+import ProtectedRoute from './components/ProtectedRoute'
 
-import Register from "./components/Register";
-import Login from "./components/Login";
-import LandingPage from "./components/LandingPage";
-import Manage from './components/Manage/Manage';
-
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
 
 function App() {
+  const { token, setToken } = useToken();
   return (
-    <Router>
-      <div className="App">
-        <nav className="navigation-bar">
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/register">Register</Link>
-            </li>
-            <li>
-              <Link to="/manage">Manage</Link>
-            </li>
-          </ul>
-        </nav>
-        {/* <header className="App-header"></header> */}
+    <div className="App">
+      <BrowserRouter>
         <Switch>
-          <Route exact path="/">
-            <LandingPage />
-          </Route>
+          <ProtectedRoute exact path="/" component={Manage} token={token} />
           <Route exact path="/login">
-            <Login />
+            <SignIn setToken={setToken} />
           </Route>
           <Route exact path="/register">
-            <Register />
-          </Route>
-          <Route exact path="/manage">
-            <Manage />
+            <SignUp />
           </Route>
         </Switch>
-      </div>
-    </Router>
+      </BrowserRouter>
+    </div>
   );
 }
 
