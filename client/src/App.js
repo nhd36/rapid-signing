@@ -5,6 +5,7 @@ import SignUp from "./pages/Auth/SignUp/SignUp";
 import { useToken } from './customizedHook/useToken';
 import ProtectedRoute from './components/ProtectedRoute'
 
+
 function App() {
   const { token, setToken } = useToken();
   return (
