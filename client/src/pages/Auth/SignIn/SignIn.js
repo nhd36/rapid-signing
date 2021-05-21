@@ -4,6 +4,7 @@ import { TextField, Box, Typography, Button } from "@material-ui/core"
 import { useState } from "react"
 import PropTypes from "prop-types"
 import { useHistory } from "react-router"
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles({
     dataBox: {
@@ -24,21 +25,21 @@ const useStyles = makeStyles({
 
 
 async function loginUser(credentials) {
-    return fetch("http://127.0.0.1:5000/api/v1/login", {
+    return fetch("http://localhost:5000/api/v1/login", {
         method: "POST",
         headers: {
             'Content-Type': "application/json"
         },
         body: JSON.stringify(credentials)
     })
-    .then(data => data.json())
-    .then(response => {
-        if (response.success) {
-            return response.accessToken;
-        }
-        return null;
-    })
-    .catch(error => null);
+        .then(data => data.json())
+        .then(response => {
+            if (response.success) {
+                return response.accessToken;
+            }
+            return null;
+        })
+        .catch(error => null);
 }
 
 const SignIn = ({ setToken }) => {
@@ -48,7 +49,7 @@ const SignIn = ({ setToken }) => {
     const [password, setPassword] = useState();
     const handleClick = async e => {
         e.preventDefault();
-        const token = await loginUser({email, password});
+        const token = await loginUser({ email, password });
         setToken(token);
         history.push("/")
     }
@@ -64,7 +65,7 @@ const SignIn = ({ setToken }) => {
                     required
                     onChange={e => setEmail(e.target.value)}
                 />
-                <br style={{margin: "2%"}}/>
+                <br style={{ margin: "2%" }} />
                 <TextField
                     id="standard-password-input"
                     label="Password"
@@ -78,14 +79,15 @@ const SignIn = ({ setToken }) => {
             </Box>
 
             <Typography>
-                Not Sign Up?
+                Not registered yet?
+                    <Link to="/register"> Sign Up Here</Link>
             </Typography>
 
             <Button
                 className={classes.button}
                 onClick={(e) => handleClick(e)}
             >
-                Log In
+                Sign In
             </Button>
         </AuthLayout>
     )

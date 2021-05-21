@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core"
 import AuthLayout from "../AuthLayout"
 import { TextField, Box, Typography, Button } from "@material-ui/core"
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles({
     dataBox: {
@@ -31,7 +32,7 @@ const SignUp = () => {
                     label="Email"
                     required
                 />
-                <br style={{margin: "5%"}}/>
+                <br style={{ margin: "5%" }} />
                 <TextField
                     id="standard-password-input"
                     label="Password"
@@ -40,7 +41,7 @@ const SignUp = () => {
                     autoComplete="current-password"
                     required
                 />
-                <br style={{margin: "5%"}}/>
+                <br style={{ margin: "5%" }} />
                 <TextField
                     id="standard-password-input"
                     label="Re-enter Password"
@@ -53,12 +54,11 @@ const SignUp = () => {
             </Box>
 
             <Typography>
-                Already Sign Up?
-                    <a href="/"> Sign In Here</a>
+                Already Have An Account?
+                    <Link to="/login"> Login Here</Link>
             </Typography>
-
-
-            <Button className={classes.button}>Sign Up</Button>
+            
+            <Button className={classes.button}>Register</Button>
         </AuthLayout>
     )
 }
