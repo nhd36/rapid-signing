@@ -102,7 +102,7 @@ class Manage extends React.Component {
     render() {
         return (
             <div>
-                <NavBar/>
+                <NavBar auth={true}/>
 
                 <div className="my-documents">
                     <header className="">

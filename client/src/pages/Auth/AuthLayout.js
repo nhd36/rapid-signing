@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 const AuthLayout = ({ children }) => {
     const classes = useStyles();
     return (
-        <Layout>
+        <Layout auth={false}>
             <Paper className={classes.root}>
                 <form>
                     {children}

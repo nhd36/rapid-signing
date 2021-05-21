@@ -3,6 +3,7 @@ import AuthLayout from "../AuthLayout"
 import { TextField, Box, Typography, Button } from "@material-ui/core"
 import { useState } from "react"
 import PropTypes from "prop-types"
+import { useHistory } from "react-router"
 
 const useStyles = makeStyles({
     dataBox: {
@@ -21,14 +22,37 @@ const useStyles = makeStyles({
     }
 })
 
-const handleClick = (email, password) => {
-    console.log(email, password);
+
+async function loginUser(credentials) {
+    return fetch("http://127.0.0.1:5000/api/v1/login", {
+        method: "POST",
+        headers: {
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify(credentials)
+    })
+    .then(data => data.json())
+    .then(response => {
+        if (response.success) {
+            return response.accessToken;
+        }
+        return null;
+    })
+    .catch(error => null);
 }
 
-const SignIn = ({ auth }) => {
+const SignIn = ({ setToken }) => {
+    const history = useHistory();
     const classes = useStyles();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
+    const handleClick = async e => {
+        e.preventDefault();
+        const token = await loginUser({email, password});
+        setToken(token);
+        history.push("/")
+    }
+
     return (
         <AuthLayout>
             <h1>Sign In</h1>
@@ -40,7 +64,7 @@ const SignIn = ({ auth }) => {
                     required
                     onChange={e => setEmail(e.target.value)}
                 />
-                <br />
+                <br style={{margin: "2%"}}/>
                 <TextField
                     id="standard-password-input"
                     label="Password"
@@ -55,14 +79,13 @@ const SignIn = ({ auth }) => {
 
             <Typography>
                 Not Sign Up?
-                    <a href="/">Click Here</a>
             </Typography>
 
-            <Button 
+            <Button
                 className={classes.button}
-                onClick={() => handleClick(email, password)}
+                onClick={(e) => handleClick(e)}
             >
-                    Log In
+                Log In
             </Button>
         </AuthLayout>
     )

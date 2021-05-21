@@ -31,7 +31,7 @@ const SignUp = () => {
                     label="Email"
                     required
                 />
-                <br />
+                <br style={{margin: "5%"}}/>
                 <TextField
                     id="standard-password-input"
                     label="Password"
@@ -40,7 +40,7 @@ const SignUp = () => {
                     autoComplete="current-password"
                     required
                 />
-                <br />
+                <br style={{margin: "5%"}}/>
                 <TextField
                     id="standard-password-input"
                     label="Re-enter Password"

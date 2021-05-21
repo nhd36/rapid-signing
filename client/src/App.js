@@ -1,22 +1,22 @@
 import Manage from "./pages/Manage/Manage";
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SignIn from "./pages/Auth/SignIn/SignIn";
 import SignUp from "./pages/Auth/SignUp/SignUp";
-import { useState } from "react";
+import { useToken } from './customizedHook/useToken';
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
-  const [token, setToken] = useState();
+  const { token, setToken } = useToken();
+  console.log(token);
   return (
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/">
-            <Manage/>
+          <ProtectedRoute exact path="/" component={Manage} token={token} />
+          <Route exact path="/login">
+            <SignIn setToken={setToken} />
           </Route>
-          <Route exact path="/sign-in">
-            <SignIn/>
-          </Route>
-          <Route exact path="/sign-up">
+          <Route exact path="/register">
             <SignUp />
           </Route>
         </Switch>

@@ -4,7 +4,8 @@ import {
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
+import { logout } from "../customizedHook/useToken"
 
 const useStyles = makeStyles({
     root: {
@@ -14,11 +15,15 @@ const useStyles = makeStyles({
     },
     toolbar: {
         display: "flex",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
     },
     logoStyle: {
+        fontFamily: 'Balsamiq Sans, cursive',
         textDecoration: "none",
         color: "white",
+        "&:hover": {
+            color: "black"
+        }
     },
     itemMenu: {
         color: "black",
@@ -41,8 +46,7 @@ const useStyles = makeStyles({
     },
 })
 
-const NavBar = () => {
-    const [auth, setAuth] = useState(true);
+const NavBar = ({ auth }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -55,11 +59,21 @@ const NavBar = () => {
     }
 
     const classes = useStyles();
+    const history = useHistory();
+
+    const handleRedirect = (path) => {
+        history.push(path);
+    }
+
+    const handleLogout = () => {
+        logout();
+        history.push('/login')
+    }
     return (
         <AppBar className={classes.root}>
             <Toolbar className={classes.toolbar}>
                 <Link to="/" className={classes.logoStyle}>
-                    <Typography variant="h4" className={classes.hoverLogo}>
+                    <Typography variant="h4">
                         🚀 RapidSign 🚀
                     </Typography>
                 </Link>
@@ -99,8 +113,8 @@ const NavBar = () => {
                                         Information
                                     </Link>
                                 </MenuItem>
-                                <MenuItem>
-                                    <Link to="/info" className={classes.itemMenu}>
+                                <MenuItem className={classes.itemMenu}> 
+                                    <Link to="/" onClick={handleLogout} className={classes.itemMenu}>
                                         Log Out
                                     </Link>
                                 </MenuItem>
@@ -108,9 +122,13 @@ const NavBar = () => {
                         </div>
                     )}
                     {!auth && (
-                        <div style={{display:"flex"}}>
-                            <Button className={classes.buttonLayout}> Sign In </Button>
-                            <Button className={classes.buttonLayout}> Sign Up </Button>
+                        <div style={{ display: "flex" }}>
+                            <Link to="/login">
+                                <Button className={classes.buttonLayout}> Sign In </Button>
+                            </Link>
+                            <Link to="/register">
+                                <Button className={classes.buttonLayout}> Sign Up </Button>
+                            </Link>
                         </div>
                     )}
                 </Typography>

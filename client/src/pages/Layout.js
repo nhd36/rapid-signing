@@ -13,11 +13,11 @@ const useStyles = makeStyles({
     }
 })
 
-const Layout = ({children}) => {
+const Layout = ({ children, auth }) => {
     const classes = useStyles();
     return (
         <div className={classes.root}>
-            <NavBar/>
+            <NavBar auth={auth} />
             <Box className={classes.childLayout}>
                 {children}
             </Box>

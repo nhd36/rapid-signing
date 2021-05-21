@@ -1,6 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config/keys.js");
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 
 // Load User model
 const User = require("../models/User");
@@ -18,17 +22,17 @@ function login(req, res) {
 
     // Check validation
     if (!isValid) {
-        return res.status(400).json({success: false, error:errors});
+        return res.status(400).json({ success: false, error: errors });
     }
 
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
 
     // Find user by username
-    User.findOne({ username }).then(user => {
+    User.findOne({ email }).then(user => {
         // Check if user exists
         if (!user) {
-            return res.status(404).json({ success: false, error: "Username not found" });
+            return res.status(404).json({ success: false, error: "Email not found" });
         }
 
         // Check password
@@ -38,14 +42,13 @@ function login(req, res) {
                 // Create JWT Payload
                 const payload = {
                     id: user._id,
-                    username: user.username,
-                    email: user.email                    
+                    email: user.email
                 };
 
                 // Sign token
                 jwt.sign(
                     payload,
-                    SECRET_KEY,
+                    process.env.SECRET_KEY,
                     {
                         expiresIn: 900 // 15 min in seconds
                     },
