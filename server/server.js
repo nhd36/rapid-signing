@@ -35,18 +35,17 @@ require("./config/passport")(passport);
 
 const port = process.env.PORT || 5000;
 
-// Database setup
+/**
+ * Database configuration
+ */
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: __dirname + '/../.env' });
 }
 
-
-// connection
 const conn = mongoose.createConnection(process.env.MONGODB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-
 
 mongoose
   .connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })

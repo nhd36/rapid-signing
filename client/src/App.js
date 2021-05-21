@@ -1,4 +1,4 @@
-import Manage from "./pages/Manage/Manage";
+import Manage from "./pages/Manage/ManageTest"
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SignIn from "./pages/Auth/SignIn/SignIn";
 import SignUp from "./pages/Auth/SignUp/SignUp";
@@ -7,7 +7,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   const { token, setToken } = useToken();
-  console.log(token);
   return (
     <div className="App">
       <BrowserRouter>

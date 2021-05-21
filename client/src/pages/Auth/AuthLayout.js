@@ -1,4 +1,4 @@
-import { makeStyles, Paper } from "@material-ui/core"
+import { makeStyles, Box } from "@material-ui/core"
 import Layout from "../Layout"
 
 const useStyles = makeStyles({
@@ -18,11 +18,11 @@ const AuthLayout = ({ children }) => {
     const classes = useStyles();
     return (
         <Layout auth={false}>
-            <Paper className={classes.root}>
+            <Box boxShadow={20} className={classes.root}>
                 <form>
                     {children}
                 </form>
-            </Paper>
+            </Box>
         </Layout>
     )
 }

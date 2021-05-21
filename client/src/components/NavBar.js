@@ -61,10 +61,6 @@ const NavBar = ({ auth }) => {
     const classes = useStyles();
     const history = useHistory();
 
-    const handleRedirect = (path) => {
-        history.push(path);
-    }
-
     const handleLogout = () => {
         logout();
         history.push('/login')

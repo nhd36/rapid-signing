@@ -1,6 +1,5 @@
 import React from 'react';
 import NavBar from '../../components/NavBar';
-import "./Manage.css"
 const axios = require("axios");
 
 class Manage extends React.Component {
