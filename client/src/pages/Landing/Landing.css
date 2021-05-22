@@ -51,7 +51,7 @@
   }
   
   .hero-image {
-    /* background-image: url('hero-img.jpg'); */
+    background-image: url('../../assets/banner.jpg');
     background-size: cover;
     height: 400px;
     width: 100%;

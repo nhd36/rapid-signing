@@ -5,7 +5,8 @@ import Layout from "../Layout";
 class Landing extends React.Component {
   render() {
     return (
-        <Layout auth={false}>
+      <div>
+        <Layout auth={false}/>
         <div class="content">
           <div class="hero-image">
             <div class="hero-text">
@@ -23,7 +24,7 @@ class Landing extends React.Component {
 
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 }
