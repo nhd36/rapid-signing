@@ -4,7 +4,7 @@ import SignIn from "./pages/Auth/SignIn/SignIn";
 import SignUp from "./pages/Auth/SignUp/SignUp";
 import { useToken } from './customizedHook/useToken';
 import ProtectedRoute from './components/ProtectedRoute'
-
+import Landing from "./pages/Landing/Landing";
 
 function App() {
   const { token, setToken } = useToken();
@@ -12,7 +12,10 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <ProtectedRoute exact path="/" component={Manage} token={token} />
+          <Route exact path="/">
+            <Landing />
+          </Route>
+          <ProtectedRoute exact path="/manage" component={Manage} token={token} />
           <Route exact path="/login">
             <SignIn setToken={setToken} />
           </Route>
