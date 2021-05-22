@@ -72,7 +72,7 @@ class Landing extends React.Component {
             </div>
             <div>
               <h2>Meet Allison, Landlord</h2>
-              <p>Allison is a landlord and used RapidSign to get signatures from her 5 tenants. All of her 5 tenants signed the document using RapidSign under a days, which is much faster than using email.
+              <p>Allison is a landlord and used RapidSign to get signatures from her 5 tenants, all of whom signed the document using RapidSign under a day, which is much faster than using email.
               </p>
             </div>
           </div>
