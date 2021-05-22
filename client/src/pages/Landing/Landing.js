@@ -94,7 +94,7 @@ class Landing extends React.Component {
 
           <div class="footer">
             <div class="copyright">
-              Copyright © 2021 <Link to="/home">RapidSign</Link>. All rights reserved.
+              Copyright © 2021 <Link to="/">RapidSign</Link>. All rights reserved.
             </div>
           </div>
         </div>
