@@ -22,7 +22,8 @@ const useStyles = makeStyles({
         textDecoration: "none",
         color: "white",
         "&:hover": {
-            color: "black"
+            color: "black",
+            backgroundColor: "inherit"
         }
     },
     itemMenu: {
@@ -39,8 +40,8 @@ const useStyles = makeStyles({
         marginRight: "1em",
         fontWeight: 600,
         "&:hover": {
-            color: 'black',
             backgroundColor: "white",
+            color: 'black',
             border: "1px solid black"
         }
     },
