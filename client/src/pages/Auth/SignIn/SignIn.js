@@ -78,9 +78,9 @@ const SignIn = ({ setToken }) => {
                 <br />
             </Box>
 
-            <Typography>
+            <Typography style={{color:"black"}}>
                 Not registered yet?
-                    <Link to="/register"> Sign Up Here</Link>
+                    <Link to="/register" style={{backgroundColor:"white"}}> Sign Up Here</Link>
             </Typography>
 
             <Button
