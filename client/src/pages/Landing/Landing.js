@@ -1,18 +1,12 @@
 import React from 'react';
 import "./Landing.css"
+import Layout from "../Layout";
 
 class Landing extends React.Component {
   render() {
     return (
       <div>
-        <nav>
-          <label class="logo">RapidSign</label>
-          <ul>
-            <li><a class="active" href="#">Home</a></li>
-            <li><a href="#">Signup</a></li>
-            <li><a href="#">Login</a></li>
-          </ul>
-        </nav>
+        <Layout auth={false}/>
         <div class="content">
           <div class="hero-image">
             <div class="hero-text">

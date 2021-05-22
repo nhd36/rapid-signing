@@ -55,10 +55,10 @@ const SignUp = () => {
 
             <Typography>
                 Already Have An Account?
-                    <Link to="/login"> Login Here</Link>
+                    <Link to="/login"> Sign In Here</Link>
             </Typography>
-            
-            <Button className={classes.button}>Register</Button>
+
+            <Button className={classes.button}>Sign Up</Button>
         </AuthLayout>
     )
 }
