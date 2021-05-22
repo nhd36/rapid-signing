@@ -7,9 +7,9 @@ const useStyles = makeStyles({
         borderRadius: "150px",
         display: "flex",
         flexDirection: "column",
-        margin: "10% 0",
+        margin: "10% 0 10% 0",
         backgroundColor: "white",
-        padding: "2% 10% 5% 10%",
+        padding: "5% 10% 5% 10%",
         textAlign: "center",
     }
 })
