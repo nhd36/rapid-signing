@@ -51,7 +51,7 @@ const SignIn = ({ setToken }) => {
         e.preventDefault();
         const token = await loginUser({ email, password });
         setToken(token);
-        history.push("/")
+        history.push("/manage")
     }
 
     return (
