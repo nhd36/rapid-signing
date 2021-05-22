@@ -27,7 +27,7 @@ class Landing extends React.Component {
             <p>Upload your document</p>
             <p>Share the provided link</p>
             <p>The recipient opens the link and signs</p>
-            <p><i>It's that simple</i></p>
+            <p>Gathering multiple signatues<i>is that simple</i></p>
 
           </div>
         </div>
@@ -39,7 +39,7 @@ class Landing extends React.Component {
               >John needed to get 5 signatures on his thesis approval form. He used RapidSign and shared his form link with the recipients. He managed to gather all his signatures in 2 days.  </p>
               </div>
               <div>
-              <img src={FeelingProud} />
+              <img alt="feature" src={FeelingProud} />
              
             </div>
           </div>
@@ -52,7 +52,7 @@ class Landing extends React.Component {
               </p>
             </div>
             <div>
-              <img src={SocialGirl} />
+              <img alt="feature" src={SocialGirl} />
             </div>
           </div>
 
@@ -62,13 +62,13 @@ class Landing extends React.Component {
               <p>John is a recruiter for a big tech company and used RapidSign to extend the offer letter to the applicant. Applicant signed the form in RapidSign's secure platform. </p>
             </div>
             <div>
-              <img src={Marketing} />
+              <img alt="feature" src={Marketing} />
             </div>
           </div>
 
           <div class="section feature">
             <div>
-              <img src={Influencer}/>
+              <img alt="feature" src={Influencer}/>
             </div>
             <div>
               <h2>Meet Allison, Landlord</h2>
@@ -84,8 +84,7 @@ class Landing extends React.Component {
               No credit card required.
             </h2>
 
-
-            <img src={OnlineEverywhere} />
+            <img alt="feature" src={OnlineEverywhere} />
             <p>&nbsp;</p>
             <p>
               <Link class="get-started-btn" to="/register">Get Started for Free</Link>
@@ -94,7 +93,7 @@ class Landing extends React.Component {
 
           <div class="footer">
             <div class="copyright">
-              Copyright © 2021 <Link to="/home">RapidSign</Link>. All rights reserved.
+              Copyright © 2021 <Link to="/">RapidSign</Link>. All rights reserved.
             </div>
           </div>
         </div>
