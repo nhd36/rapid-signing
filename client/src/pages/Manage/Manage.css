@@ -13,6 +13,7 @@
   h2 {
     font-weight: bold;
     margin-bottom: 15px;
+    color: white;
   }
   
   .mr {
@@ -109,6 +110,7 @@ div.upload-form-container span.input-holder input[type="text"]{
   border-collapse: collapse;
   border: 3px solid #ddd;
   width: 100%;
+  color: white;
 }
 
 #my-documents td, #students th {

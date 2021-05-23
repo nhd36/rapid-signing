@@ -1,66 +1,69 @@
 import React from 'react';
 import NavBar from '../../components/NavBar';
+import "./Manage.css"
 const axios = require("axios");
 
 class Manage extends React.Component {
     constructor(props) {
         super(props)
+        this.SERVER_URL = process.env.REACT_APP_SERVER_PATH;
 
-        const defaultFileType = "json";
-        this.fileNames = {
-            json: "states.json"
-        }
+        this.SERVER_URL_FETCH_FILES = `${this.SERVER_URL}/api/v1/files`;
+        this.SERVER_URL_UPLOAD_FILE = `${this.SERVER_URL}/api/v1/upload`;
+        this.SERVER_URL_GET_FILE = `${this.SERVER_URL}/api/v1/file`;
+
+
+        const defaultFileType = "pdf";
+        this.uploadSuccessMessage = "Upload successfull!";
+        this.uploadFailureMessage = "Upload failed. Try again later.";
         this.state = {
             fileType: defaultFileType,
             fileDownloadUrl: null,
-            status: "No upload"
+            uploadStatusMessage: "No upload",
+            uploadStatus: null,
+            files: []
         }
-        this.download = this.download.bind(this);
+        this.downloadFile = this.downloadFile.bind(this);
         this.uploadFile = this.uploadFile.bind(this);
         this.validateSize = this.validateSize.bind(this);
-        this.onChangeHandler = this.onChangeHandler.bind(this);
+
 
     }
 
-    download(event) {
-        event.preventDefault();
-        // Prepare the file
-        let output;
-        if (this.state.fileType === "pdf") {
-            output = JSON.stringify({ states: this.state.data },
-                null, 4);
-        }
-        // Download it
-        const blob = new Blob([output]);
-        const fileDownloadUrl = URL.createObjectURL(blob);
-        this.setState({ fileDownloadUrl: fileDownloadUrl },
-            () => {
-                this.dofileDownload.click();
-                URL.revokeObjectURL(fileDownloadUrl);  // free up storage--no longer needed.
-                this.setState({ fileDownloadUrl: "" })
+    componentDidMount() {
+        this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES);
+    }
+    fetchApiToFiles = (apiToFetch) => {
+        fetch(apiToFetch)
+            .then(result => result.json())
+            .then((files) => {
+                this.setState({
+                    ...this.state,
+                    files
+                })
             })
+            .catch((error) => console.log(error));
     }
 
-    onChangeHandler(event) {
+    uploadFile(event) {
         var file = event.target.files[0];
-        let UPLOAD_URL = "http://localhost:5000/v1/files";
         if (this.validateSize(event)) {
             this.setState({ status: "In progress...." });
             // if return true allow to setState
             const data = new FormData()
             data.append('file', file)
-            axios.post(UPLOAD_URL, data)
+            axios.post(this.SERVER_URL_UPLOAD_FILE, data)
                 .then(res => { // then print response status
-                    this.setState({ status: "Upload successfull" });
+                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
+                    this.setState({ uploadStatus: true });
                     console.log('Upload is successful.', res);
+                    this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
-                    this.setState({ status: "Upload failed. Try again later." });
+                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
+                    this.setState({ uploadStatus: false });
                     console.log('Upload failed', err);
                 })
-
-
-
         }
     }
 
@@ -74,35 +77,25 @@ class Manage extends React.Component {
             console.log(err);
         }
         return true
-    };
+    }
 
-    uploadFile(evt) {
-        var formdata = new FormData();
-        formdata.append("file", evt.target.files[0]);
-        let UPLOAD_URL = "http://localhost:5000/v1/files";
-
+    downloadFile(evt) {
         var requestOptions = {
-            method: 'POST',
-            body: formdata,
+            method: 'GET',
             redirect: 'follow'
         };
-
-        fetch(UPLOAD_URL, requestOptions)
+        let fileName = evt.target.fileName;
+        fetch(`${this.SERVER_URL_GET_FILE}/${fileName}/`, requestOptions)
             .then(response => response.text())
-            .then(result => {
-                this.setState({ status: "Upload successfull." });
-                console.log(result)
-            })
-            .catch(error => {
-                this.setState({ status: "Upload failed. Try again later." });
-                console.log('error', error)
-            });
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
     }
+
+
     render() {
         return (
             <div>
-                <NavBar auth={true}/>
-
+                <NavBar auth={true} />
                 <div className="my-documents">
                     <header className="">
                         <p> 🚀 RapidSign 🚀<br></br> Blazingly Fast and Secure Document Signing Platform</p>
@@ -130,14 +123,14 @@ class Manage extends React.Component {
                             <span class="input-holder"><input type="text" id="description" name="description" placeholder="File Description" /></span>
 
                             <span class="label-holder"><label for="file">File</label></span>
-                            <span class="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler}/></span>
+                            <span class="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler} /></span>
                             {/* <div>
                         <button width="100%" type="button" onClick={this.fileUploadHandler}>Upload File</button>
                     </div> */}
-                        <span class="label-holder"><label for="status">Upload Status:</label></span>
-                        <span class="input-holder"><pre className="status">{this.state.status}</pre></span>
+                            <span class="label-holder"><label for="status">Upload Status:</label></span>
+                            <span class="input-holder"><pre className="status">{this.state.status}</pre></span>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>

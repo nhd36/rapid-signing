@@ -1,4 +1,5 @@
-import { Box, Button, makeStyles } from "@material-ui/core"
+import { Box, Button, makeStyles } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
     root: {
@@ -7,7 +8,8 @@ const useStyles = makeStyles({
         borderRadius: "20px",
         padding: "4% 5% 4% 5%",
         justifyContent: "space-between",
-        marginBottom: "1em"
+        marginBottom: "1em",
+        color: "white"
     },
     documentButtonBox: {
         display: "flex",
@@ -34,15 +36,17 @@ const DocumentBox = ({ data }) => {
                 </span>
             </div>
             <div className={classes.documentButtonBox}>
-                <Button
-                    className={classes.customizedButton}
-                    style={{backgroundColor: "blue"}}
-                >
-                    View
+                <Link to={"/"+ data.id} target="_blank" rel="noopener noreferrer">
+                    <Button
+                        className={classes.customizedButton}
+                        style={{ backgroundColor: "blue" }}
+                    >
+                        View
                 </Button>
+                </Link>
                 <Button
                     className={classes.customizedButton}
-                    style={{backgroundColor: "red"}}
+                    style={{ backgroundColor: "red" }}
                 >
                     Delete
                 </Button>

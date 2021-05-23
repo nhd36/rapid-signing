@@ -5,6 +5,7 @@ import SignUp from "./pages/Auth/SignUp/SignUp";
 import { useToken } from './customizedHook/useToken';
 import ProtectedRoute from './components/ProtectedRoute'
 import Landing from "./pages/Landing/Landing";
+import Signature from "./pages/Signature/Signature";
 
 function App() {
   const { token, setToken } = useToken();
@@ -21,6 +22,9 @@ function App() {
           </Route>
           <Route exact path="/register">
             <SignUp />
+          </Route>
+          <Route path="/:documentId">
+            <Signature />
           </Route>
         </Switch>
       </BrowserRouter>

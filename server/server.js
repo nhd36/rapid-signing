@@ -2,50 +2,32 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require("passport");
-const serveStatic = require('serve-static');
-const crypto = require("crypto");
 const path = require("path");
-const multer = require("multer");
-const GridFsStorage = require("multer-gridfs-storage");
 var cors = require('cors')
 
 // Endpoints import
 const home = require('./endpoints/home');
 const login = require('./endpoints/login');
 const register = require('./endpoints/register');
+const { getDocument, createDocument, deleteDocument, lockDocument, unlockDocument } = require('./endpoints/document');
+const { upload, uploadSingleFile, getAllFiles, searchByName } = require('./endpoints/files')
 
 // Server setup
 const app = express();
 
-
-// Serve static assets (build folder) if in production	
-if (process.env.NODE_ENV === "production") {
-  app.use(serveStatic(path.join(__dirname, '..', 'client', 'dist')));
-}
-
-
-// Passport middleware
-app.use(passport.initialize());
+// Middleware configuration
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()) // To parse the incoming requests with JSON payloads
 app.use(cors())
-
-// Passport config
+app.use(passport.initialize());
 require("./config/passport")(passport);
 
 const port = process.env.PORT || 5000;
 
-/**
- * Database configuration
- */
+// Environment variables configuration
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: __dirname + '/../.env' });
 }
-
-const conn = mongoose.createConnection(process.env.MONGODB, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
 
 mongoose
   .connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -56,98 +38,23 @@ mongoose
     console.log('MongoDB failed to connect with error:', error)
   })
 
-// init gfs
-let gfs;
-conn.once("open", () => {
-  // init stream
-  gfs = new mongoose.mongo.GridFSBucket(conn.db, {
-    bucketName: "uploads"
-  });
-});
-
-// Storage
-const storage = new GridFsStorage({
-  url: process.env.MONGODB,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        /*const filename = buf.toString("hex") + path.extname(file.originalname);*/
-        const filename = file.originalname;
-        const fileInfo = {
-          filename: filename,
-          bucketName: "uploads"
-        };
-        resolve(fileInfo);
-      });
-    });
-  }
-});
-
-const upload = multer({
-  storage
-});
-
-
+  // Endpoints configuration
 let API_VERSION = "v1";
-// Endpoints setup
-// Source: https://github.com/shubhambattoo/node-js-file-upload/blob/master/app.js
-// Source: https://betech.info/mongodb-gridfs-file-upload-example-with-node-js/
-// https://stackoverflow.com/questions/62265091/file-download-from-mongodb-atlas-to-clientreact-js-using-node-js
-
-// Post single file
-app.post(`/api/${API_VERSION}/upload`, upload.single('file'), (req, res) => {
-  // console.log(req.file.originalname);
-  res.json({ message: "success", file: req.file.originalname });
-});
-
-
-//show all files
-app.get(`/api/${API_VERSION}/files`, (req, res) => {
-  gfs.find().toArray((err, files) => {
-    if (!files || files.length === 0) {
-      return res.status(404).json({
-        error: "No file exists"
-      });
-    }
-    return res.json(files);
-  });
-});
-
-//search files by original name
-app.get(`/api/${API_VERSION}/file/:filename`, (req, res) => {
-  console.log("Received filename is", req.params.filename);
-  res.set('content-type', 'application/pdf');
-  res.set('accept-ranges', 'bytes');
-  try {
-    const downloadStream = gfs.openDownloadStreamByName(req.params.filename);
-
-    downloadStream.on('data', (chunk) => {
-      res.write(chunk);
-    });
-
-    downloadStream.on('error', () => {
-      res.sendStatus(404);
-    });
-
-    downloadStream.on('end', () => {
-      res.end();
-    });
-  } catch (err) {
-    return res.status(400).json({ message: 'Invalid filename' });
-  }
-});
-
 app.get(`/api/${API_VERSION}`, home);
 app.post(`/api/${API_VERSION}/login`, login);
 app.post(`/api/${API_VERSION}/register`, register);
+app.post(`/api/${API_VERSION}/create-document`,  passport.authenticate("jwt", { session: false }), upload.single('file'), createDocument);
+app.get(`/api/${API_VERSION}/document/:id`, passport.authenticate("jwt", { session: false }),  getDocument);
+app.delete(`/api/${API_VERSION}/delete-document/:id`, passport.authenticate("jwt", { session: false }), deleteDocument);
+app.post(`/api/${API_VERSION}/lock-document/:id`,  passport.authenticate("jwt", { session: false }), lockDocument);
+app.post(`/api/${API_VERSION}/unlock-document/:id`,  passport.authenticate("jwt", { session: false }), unlockDocument);
+app.post(`/api/${API_VERSION}/upload`,  passport.authenticate("jwt", { session: false }), upload.single('file'), uploadSingleFile);
+app.get(`/api/${API_VERSION}/files`,  passport.authenticate("jwt", { session: false }), getAllFiles);
+app.post(`/api/${API_VERSION}/file/:filename`,  passport.authenticate("jwt", { session: false }), searchByName);
 
 // Serve static assets (build folder) if in production	
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
   });
