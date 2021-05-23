@@ -111,7 +111,7 @@ const NavBar = ({ auth }) => {
                                     </Link>
                                 </MenuItem>
                                 <MenuItem className={classes.itemMenu}> 
-                                    <Link to="/" onClick={handleLogout} className={classes.itemMenu}>
+                                    <Link to="/login" onClick={handleLogout} className={classes.itemMenu}>
                                         Log Out
                                     </Link>
                                 </MenuItem>

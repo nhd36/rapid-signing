@@ -3,6 +3,7 @@ import Layout from "../Layout"
 import DocumentBox from "./components/DocumentBox"
 import { useState } from "react";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+const axios = require("axios");
 
 const useStyles = makeStyles({
     root: {
@@ -11,7 +12,8 @@ const useStyles = makeStyles({
         width: "100%",
         justifyContent: "center",
         border: "2px solid white",
-        color: "white"
+        color: "white",
+        minWidth: "800px"
     },
     contentStyle: {
         padding: "5%",
@@ -54,12 +56,68 @@ const mocks = [
 ]
 
 const Manage = () => {
+    let SERVER_URL_FETCH_FILES = `${process.env.REACT_APP_SERVER_PATH}/api/v1/files`;
+    let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
+    
+
     const classes = useStyles();
     const [uploadStatus, setUploadStatus] = useState('')
+    const [uploadSuccessMessage, setUploadSuccessMessage] = useState("Upload successfull!");
+    const [uploadFailureMessage, setUploadFailureMessage] = useState("Upload failed. Try again later.");
     const [uploadedFile, setUploadedFile] = useState()
     const handleClick = async e => {
         e.preventDefault();
     }
+
+    const fethcDocuments = () => {
+        fetch(SERVER_URL_FETCH_FILES)
+            .then(result => result.json())
+            .then((files) => {
+                this.setState({
+                    ...this.state,
+                    files
+                })
+            })
+            .catch((error) => console.log(error));
+    }
+
+    const uploadFile = (event) => {
+        var file = event.target.files[0];
+        if (this.validateSize(event)) {
+            this.setState({ status: "In progress...." });
+            // if return true allow to setState
+            const data = new FormData()
+            data.append('file', file)
+            axios.post(SERVER_URL_UPLOAD_FILE, data)
+                .then(res => { // then print response status
+                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
+                    this.setState({ uploadStatus: true });
+                    console.log('Upload is successful.', res);
+                    this.fetchApiToFiles(SERVER_URL_FETCH_FILES); // get all documents that belong to user
+                })
+                .catch(err => { // then print response status
+                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
+                    this.setState({ uploadStatus: false });
+                    console.log('Upload failed', err);
+                })
+        }
+    }
+
+    const validateSize = (event) => {
+        let file = event.target.files[0];
+        let size = 30000;
+        let err = '';
+        console.log(file.size);
+        if (file.size > size) {
+            err = file.type + 'is too large, please pick a smaller file\n';
+            console.log(err);
+        }
+        return true
+    };
+
+
+
+
     return (
         <Layout auth={true}>
             <div>

@@ -64,7 +64,6 @@ const SignUp = () => {
                     return response.success;
                 }
                 else {
-                    alert(response)
                     setStatusMessage(response.message);
                 }
             })
