@@ -22,7 +22,5 @@ export function useToken () {
 }
 
 export function logout () {
-    console.log(sessionStorage.getItem('token'))
     sessionStorage.removeItem('token');
-    console.log(sessionStorage.getItem('token'))
 }
