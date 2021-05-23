@@ -18,7 +18,6 @@ async function createDocument(req, res) {
     const userEmail = req.body.userEmail
     const documentName = req.body.documentName
     const documentDescription = req.body.documentDescription
-    console.log(userEmail,documentName, documentDescription, req.file.id)
     // Check if the userEmail is empty 
     if (userEmail.trim() === '') {
         res.status(404).json({ success: false, message: 'userEmail must not be empty' });
@@ -43,7 +42,6 @@ async function createDocument(req, res) {
     try {
         // Check if there is an existing user.
         const user = await User.findOne({ email: userEmail })
-        console.log(user)
         if (!user) return res.status(404).json({ success: false, error: "Email is invalid" });
 
         // Check if user already has created document with same name.
@@ -69,7 +67,7 @@ async function createDocument(req, res) {
         }
     } catch (err) {
         res.status(404).json({ success: false, message: 'Your Document is not valid/cannot be saved. A technical error occurred. Please try again later.' })
-        console.log("Error occurred", err)
+        console.log("Error occurred during document creation", err)
         return
     }
 

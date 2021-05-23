@@ -15,13 +15,11 @@ const { upload, uploadSingleFile, getAllFiles, searchByName } = require('./endpo
 // Server setup
 const app = express();
 
-// Passport middleware
-app.use(passport.initialize());
+// Middleware configuration
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()) // To parse the incoming requests with JSON payloads
 app.use(cors())
-
-// Passport config
+app.use(passport.initialize());
 require("./config/passport")(passport);
 
 const port = process.env.PORT || 5000;
@@ -45,14 +43,14 @@ let API_VERSION = "v1";
 app.get(`/api/${API_VERSION}`, home);
 app.post(`/api/${API_VERSION}/login`, login);
 app.post(`/api/${API_VERSION}/register`, register);
-app.post(`/api/${API_VERSION}/create-document`, upload.single('file'), createDocument);
-app.get(`/api/${API_VERSION}/document/:id`, getDocument);
-app.delete(`/api/${API_VERSION}/delete-document/:id`, deleteDocument);
-app.post(`/api/${API_VERSION}/lock-document/:id`, lockDocument);
-app.post(`/api/${API_VERSION}/unlock-document/:id`, unlockDocument);
-app.post(`/api/${API_VERSION}/upload`, upload.single('file'), uploadSingleFile);
-app.get(`/api/${API_VERSION}/files`, getAllFiles);
-app.post(`/api/${API_VERSION}/file/:filename`, searchByName);
+app.post(`/api/${API_VERSION}/create-document`,  passport.authenticate("jwt", { session: false }), upload.single('file'), createDocument);
+app.get(`/api/${API_VERSION}/document/:id`, passport.authenticate("jwt", { session: false }),  getDocument);
+app.delete(`/api/${API_VERSION}/delete-document/:id`, passport.authenticate("jwt", { session: false }), deleteDocument);
+app.post(`/api/${API_VERSION}/lock-document/:id`,  passport.authenticate("jwt", { session: false }), lockDocument);
+app.post(`/api/${API_VERSION}/unlock-document/:id`,  passport.authenticate("jwt", { session: false }), unlockDocument);
+app.post(`/api/${API_VERSION}/upload`,  passport.authenticate("jwt", { session: false }), upload.single('file'), uploadSingleFile);
+app.get(`/api/${API_VERSION}/files`,  passport.authenticate("jwt", { session: false }), getAllFiles);
+app.post(`/api/${API_VERSION}/file/:filename`,  passport.authenticate("jwt", { session: false }), searchByName);
 
 // Serve static assets (build folder) if in production	
 if (process.env.NODE_ENV === "production") {

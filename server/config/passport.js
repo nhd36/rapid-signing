@@ -1,11 +1,13 @@
+// Source: http://www.passportjs.org/docs/username-password/
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const mongoose = require("mongoose");
 const User = mongoose.model("users");
 
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({path:__dirname+'/../../.env'});
+  require('dotenv').config({ path: __dirname + '/../../.env' });
 }
+
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -13,6 +15,7 @@ opts.secretOrKey = process.env.SECRET_KEY;
 
 module.exports = passport => {
   passport.use(
+    "jwt",
     new JwtStrategy(opts, (jwt_payload, done) => {
       User.findById(jwt_payload.id)
         .then(user => {
