@@ -20,8 +20,7 @@ const useStyles = makeStyles({
         borderRadius: "50px",
         marginBottom: "1em",
         color: "white",
-        fontWeight: 900,
-        width: "150px"
+        fontWeight: 900
     }
 })
 

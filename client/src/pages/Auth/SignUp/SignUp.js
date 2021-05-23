@@ -1,6 +1,7 @@
-import { makeStyles } from "@material-ui/core"
-import AuthLayout from "../AuthLayout"
-import { TextField, Box, Typography, Button } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core";
+import AuthLayout from "../AuthLayout";
+import { TextField, Box, Typography, Button } from "@material-ui/core";
+import { Alert } from '@material-ui/lab';
 import { Link, useHistory } from 'react-router-dom';
 import { useState } from "react";
 
@@ -21,20 +22,7 @@ const useStyles = makeStyles({
     }
 })
 
-async function registerUser(credentials) {
-    return fetch("http://localhost:5000/api/v1/register", {
-        method: "POST",
-        headers: {
-            'Content-Type': "application/json"
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(data => data.json())
-        .then(response => {
-            return response.success;
-        })
-        .catch(error => false);
-}
+
 
 const SignUp = () => {
     const history = useHistory();
@@ -42,16 +30,45 @@ const SignUp = () => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [repeatPassword, setRepeatPassword] = useState();
+    const [statusMessage, setStatusMessage] = useState('');
+
 
     const handleClick = async e => {
         e.preventDefault();
+        if (!repeatPassword || !password || !email){
+            setStatusMessage("Fields cannot be empty.")
+            return false;
+        }
         if (repeatPassword !== password) {
+            setStatusMessage("Passwords do not match.")
             return false;
         }
         const success = await registerUser({ email, password });
         if (success) {
             history.push("/login");
         }
+    }
+
+    async function registerUser(credentials) {
+        return fetch(`${process.env.REACT_APP_SERVER_PATH}/api/v1/register`, {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(credentials)
+        })
+            .then(data => data.json())
+            .then(response => {
+                if (response.success) {
+                    setStatusMessage('');
+                    return response.success;
+                }
+                else {
+                    alert(response)
+                    setStatusMessage(response.message);
+                }
+            })
+            .catch(error => false);
     }
 
     return (
@@ -87,18 +104,22 @@ const SignUp = () => {
                 />
                 <br />
             </Box>
-
-            <Typography style={{color: 'black'}}>
-                Already Have An Account?
-                    <Link to="/login" style={{backgroundColor:"white"}}> Sign In Here</Link>
-            </Typography>
-
-            <Button 
+            {statusMessage && <Alert variant="filled" severity="error">
+                Registration failed. {statusMessage}
+            </Alert>
+            }
+          
+            <Button
                 className={classes.button}
                 onClick={e => handleClick(e)}
-                >
-                    Sign Up
-                </Button>
+            >
+                Sign Up
+            </Button>
+            <Typography style={{ marginTop: "5%", color: 'black' }}>
+                Already Have An Account?
+                    <Link to="/login" style={{ backgroundColor: "white" }}> Sign In Here</Link>
+            </Typography>
+
         </AuthLayout>
     )
 }

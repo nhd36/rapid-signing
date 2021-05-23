@@ -76,7 +76,7 @@ const NavBar = ({ auth }) => {
                 </Link>
                 <Typography>
                     {auth && (
-                        <div>
+                        <>
                             <IconButton
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
@@ -116,7 +116,7 @@ const NavBar = ({ auth }) => {
                                     </Link>
                                 </MenuItem>
                             </Menu>
-                        </div>
+                        </>
                     )}
                     {!auth && (
                         <div style={{ display: "flex" }}>
