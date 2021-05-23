@@ -22,7 +22,7 @@ function login(req, res) {
 
     // Check validation
     if (!isValid) {
-        return res.status(400).json({ success: false, error: errors });
+        return res.status(400).json({ success: false, message: errors.message });
     }
 
     const email = req.body.email;

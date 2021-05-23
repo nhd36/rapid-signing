@@ -16,13 +16,13 @@ function register(req, res) {
 
     // Check validation
     if (!isValid) {
-        return res.status(400).json(errors);
+        return res.status(400).json({success: false, message: errors.message });
     }
     let userInputEmail = req.body.email;
     let userInputPassword = req.body.password;
     User.findOne({ email: userInputEmail }).then(user => {
         if (user) {
-            return res.status(400).json({ success: false, error: "Email already taken." });
+            return res.status(400).json({ success: false, message: "Email already taken." });
         } else {
             const newUser = new User({
                 email: userInputEmail,

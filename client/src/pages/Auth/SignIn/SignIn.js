@@ -5,6 +5,7 @@ import { useState } from "react"
 import PropTypes from "prop-types"
 import { useHistory } from "react-router"
 import { Link } from 'react-router-dom';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles({
     dataBox: {
@@ -24,8 +25,16 @@ const useStyles = makeStyles({
 })
 
 
+const SignIn = ({ setToken }) => {
+    const history = useHistory();
+    const classes = useStyles();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [statusMessage, setStatusMessage] = useState('');
+
+    
 async function loginUser(credentials) {
-    return fetch("http://localhost:5000/api/v1/login", {
+    return fetch(`${process.env.REACT_APP_SERVER_PATH}/api/v1/login`, {
         method: "POST",
         headers: {
             'Content-Type': "application/json"
@@ -42,13 +51,13 @@ async function loginUser(credentials) {
         .catch(error => null);
 }
 
-const SignIn = ({ setToken }) => {
-    const history = useHistory();
-    const classes = useStyles();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+
     const handleClick = async e => {
         e.preventDefault();
+        if (!password || !email){
+            setStatusMessage("Fields cannot be empty.")
+            return false;
+        }
         const token = await loginUser({ email, password });
         setToken(token);
         history.push("/manage")
@@ -77,18 +86,20 @@ const SignIn = ({ setToken }) => {
                 />
                 <br />
             </Box>
-
-            <Typography style={{color:"black"}}>
-                Not registered yet?
-                    <Link to="/register" style={{backgroundColor:"white"}}> Sign Up Here</Link>
-            </Typography>
-
+            {statusMessage && <Alert variant="filled" severity="error">
+                Registration failed. {statusMessage}
+            </Alert>
+            }
             <Button
                 className={classes.button}
                 onClick={(e) => handleClick(e)}
             >
                 Sign In
             </Button>
+            <Typography style={{ marginTop: "5%", color: 'black' }}>
+                Not registered yet?
+                    <Link to="/register" style={{backgroundColor:"white"}}> Sign Up Here</Link>
+            </Typography>
         </AuthLayout>
     )
 }
