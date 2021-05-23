@@ -106,8 +106,8 @@ const NavBar = ({ auth }) => {
                                     </Link>
                                 </MenuItem>
                                 <MenuItem>
-                                    <Link to="/info" className={classes.itemMenu}>
-                                        Information
+                                    <Link to="/manage" className={classes.itemMenu}>
+                                        Manage
                                     </Link>
                                 </MenuItem>
                                 <MenuItem className={classes.itemMenu}> 
@@ -120,6 +120,9 @@ const NavBar = ({ auth }) => {
                     )}
                     {!auth && (
                         <div style={{ display: "flex" }}>
+                            <Link to="/manage">
+                                <Button className={classes.buttonLayout} style={{backgroundColor: "red"}}> Manage </Button>
+                            </Link>
                             <Link to="/login">
                                 <Button className={classes.buttonLayout}> Sign In </Button>
                             </Link>

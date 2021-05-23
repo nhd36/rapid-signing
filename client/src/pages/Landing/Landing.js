@@ -18,7 +18,7 @@ class Landing extends React.Component {
           <div class="hero-image">
             <div class="hero-text">
               <h1 class="welcome">Welcome to RapidSign</h1>
-              <p>Signing documents has never been faster.</p>
+              <p>Collecting signatures has never been faster.</p>
             </div>
           </div>
           <div class="information">
@@ -27,7 +27,7 @@ class Landing extends React.Component {
             <p>Upload your document</p>
             <p>Share the provided link</p>
             <p>The recipient opens the link and signs</p>
-            <p>Gathering multiple signatues<i>is that simple</i></p>
+            <p>Gathering multiple signatures<i>is that simple</i></p>
 
           </div>
         </div>

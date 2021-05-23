@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Create Schema
-const UserSchema = new Schema({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true
@@ -16,7 +16,13 @@ const UserSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
-    }
+    },
+    documents: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'documents'
+        }
+    ]
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = User = mongoose.model("users", userSchema);

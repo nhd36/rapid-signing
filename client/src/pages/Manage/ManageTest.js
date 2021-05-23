@@ -7,10 +7,13 @@ const useStyles = makeStyles({
         margin: "5% 0",
         borderRadius: "50px",
         width: "80%",
+        justifyContent: "center"
     },
     contentStyle: {
         padding: "5%",
-        display: "flex"
+        display: "flex",
+        flexDirection: "column",
+        color: "white"
     },
     customizedButton: {
 
@@ -38,7 +41,7 @@ const Manage = () => {
         <Layout auth={true}>
             <Box boxShadow={20} className={classes.root}>
                 <div className={classes.contentStyle}>
-                    <div style={{ width: "50%" }}>
+                    <div style={{ width: "90%" }}>
                         <h1>My Documents 📝</h1>
                         <p>You can see all the documents you created or received here.</p>
                     </div>

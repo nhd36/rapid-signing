@@ -7,7 +7,8 @@ const useStyles = makeStyles({
         borderRadius: "20px",
         padding: "4% 5% 4% 5%",
         justifyContent: "space-between",
-        marginBottom: "1em"
+        marginBottom: "1em",
+        color: "white"
     },
     documentButtonBox: {
         display: "flex",
