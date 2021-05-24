@@ -10,7 +10,7 @@ const home = require('./endpoints/home');
 const login = require('./endpoints/login');
 const register = require('./endpoints/register');
 const { getDocument, createDocument, deleteDocument, lockDocument, unlockDocument } = require('./endpoints/document');
-const { upload, uploadSingleFile, getAllFiles, searchByName } = require('./endpoints/files')
+const { upload, getFile, uploadSingleFile, getAllFiles, searchByName } = require('./endpoints/files')
 
 // Server setup
 const app = express();
@@ -50,7 +50,8 @@ app.post(`/api/${API_VERSION}/lock-document/:id`,  passport.authenticate("jwt", 
 app.post(`/api/${API_VERSION}/unlock-document/:id`,  passport.authenticate("jwt", { session: false }), unlockDocument);
 app.post(`/api/${API_VERSION}/upload`,  passport.authenticate("jwt", { session: false }), upload.single('file'), uploadSingleFile);
 app.get(`/api/${API_VERSION}/files`,  passport.authenticate("jwt", { session: false }), getAllFiles);
-app.post(`/api/${API_VERSION}/file/:filename`,  passport.authenticate("jwt", { session: false }), searchByName);
+app.post(`/api/${API_VERSION}/file/search/:filename`,  passport.authenticate("jwt", { session: false }), searchByName);
+app.get(`/api/${API_VERSION}/file/:id`,  passport.authenticate("jwt", { session: false }), getFile);
 
 // Serve static assets (build folder) if in production	
 if (process.env.NODE_ENV === "production") {
