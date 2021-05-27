@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const mongoose = require('mongoose');
 const GridFsStorage = require("multer-gridfs-storage");
 const multer = require("multer");
+const { ObjectId } = require('mongodb');
 
 // Environment variables configuration
 if (process.env.NODE_ENV !== 'production') {
@@ -57,6 +58,29 @@ function uploadSingleFile(req, res) {
     res.json({ success: true, id: req.file.id, file: req.file.originalname });
 };
 
+// Get single file given id
+function getFile(req, res) {
+    res.set('content-type', 'application/pdf');
+    res.set('accept-ranges', 'bytes');
+    try {
+        var downloadStream = gfs.openDownloadStream(ObjectId(req.params.id));
+
+        downloadStream.on('data', (chunk) => {
+            res.write(chunk);
+        });
+
+        downloadStream.on('error', (error) => {
+            console.log("Inside downloadStream.on(error)", error)
+            res.sendStatus(404);
+        });
+
+        downloadStream.on('end', () => {
+            res.end();
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, message: 'Invalid file id' });
+    }
+};
 
 //show all files
 function getAllFiles(req, res) {
@@ -90,9 +114,9 @@ function searchByName(req, res) {
             res.end();
         });
     } catch (err) {
-        return res.status(400).json({ message: 'Invalid filename' });
+        return res.status(400).json({ success: false, message: 'Invalid filename' });
     }
 };
 
 
-module.exports = { upload, uploadSingleFile, getAllFiles, searchByName }
+module.exports = { upload, getFile, uploadSingleFile, getAllFiles, searchByName }
