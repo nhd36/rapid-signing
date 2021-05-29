@@ -22,8 +22,8 @@ const documentSchema = new Schema({
         type: String,
         required: true
     },
-    // documentId is enforced to be unique
-    documentId: {
+    // initialFileId is enforced to be unique
+    initialFileId: {
         type: Schema.Types.ObjectId,
         ref: 'uplaods.files',
         required: true
