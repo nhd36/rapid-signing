@@ -57,6 +57,16 @@ const DocumentBox = ({ data }) => {
             .then(result => console.log(result))
             .catch(error => console.log('error', error));
     }
+
+    const copyLink = (id) => {
+        let hiddenLink = document.createElement("input");
+        hiddenLink.style = "position: absolute; left: -1000px; top: -1000px;";
+        hiddenLink.value = window.location.origin + "/" + id;
+        document.body.appendChild(hiddenLink);
+        hiddenLink.select();
+        document.execCommand("copy");
+        document.body.removeChild(hiddenLink);
+    }
     return (
         <Box boxShadow={5} className={classes.root}>
             <div className={classes.documentContent}>
@@ -80,6 +90,13 @@ const DocumentBox = ({ data }) => {
                     onClick={(e) => downloadFile(e)}
                 > 
                     Download
+                </Button>
+                <Button 
+                    className={classes.customizedButton} 
+                    style={{ backgroundColor: "blue" }} 
+                    onClick={() => copyLink(data.id)}
+                >
+                    Copy Link
                 </Button>
                 <Button
                     className={classes.customizedButton}
