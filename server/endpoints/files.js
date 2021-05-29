@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const GridFsStorage = require("multer-gridfs-storage");
 const multer = require("multer");
 const { ObjectId } = require('mongodb');
+const Document = require('../models/Document')
 
 // Environment variables configuration
 if (process.env.NODE_ENV !== 'production') {
@@ -53,9 +54,20 @@ const upload = multer({
 // Source: https://stackoverflow.com/questions/62265091/file-download-from-mongodb-atlas-to-clientreact-js-using-node-js
 
 // Post single file
-function uploadSingleFile(req, res) {
+async function uploadSingleFile(req, res) {
     console.log("req.file", req.file);
-    res.json({ success: true, id: req.file.id, file: req.file.originalname });
+    console.log("req.body.id", req.body.id);
+    try {
+        const document = await Document.findById({ _id: ObjectId(req.body.id) });
+        if (!document) return res.status(404).send({ success: false, message: "Document doesn't exist. " });
+        document.versions.push(req.file.id);
+        await document.save();
+        return res.json({ success: true, id: req.file.id, file: req.file.originalname, document: document });    
+    } catch (err) {
+        console.log("Error occurred", err)
+        res.status(404).json({ success: false, error: 'Your document is not fetched. A technical error occurred. Please try again later.' })
+        return
+    }
 };
 
 // Get single file given id

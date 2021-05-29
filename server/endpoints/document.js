@@ -35,7 +35,7 @@ async function createDocument(req, res) {
     }
     // Check if the documentId is empty 
     if (req.file.id === '') {
-        res.status(404).json({ success: false, message: 'documentId must not be empty' });
+        res.status(404).json({ success: false, message: 'initialFileId must not be empty' });
         return
     }
 
@@ -55,7 +55,7 @@ async function createDocument(req, res) {
                 userEmail: userEmail,
                 documentName: documentName,
                 documentDescription: documentDescription,
-                documentId: req.file.id,
+                initialFileId: req.file.id,
                 createdAt: new Date().toISOString(),
                 user: user._id
             })
@@ -89,6 +89,24 @@ async function getDocument(req, res) {
     }
 }
 
+/** 
+ * GET
+ * /documents
+ * get documents that belong to a user. Also aggregate the individual versions.
+ */
+async function getAllDocuments(req, res) {
+    console.log(req.user)
+    // Check if there is an existing user.
+    const user = await User.findOne({ email: req.user.email })
+    if (!user) return res.status(404).json({ success: false, error: "Email is invalid" });
+    const documents = user.documents;
+    let result = {};
+    for (let i=0;i<documents.length;i++){
+        let document = await Document.find({_id: documents[i], user: req.user._id});
+        result[documents[i]] = document.versions;
+    }
+    return res.status(200).json({ success: true, documentIds: documents, mapping: result});
+}
 
 /** 
  * DELETE
@@ -133,4 +151,4 @@ async function unlockDocument(req, res) {
 }
 
 
-module.exports = { getDocument, createDocument, deleteDocument, lockDocument, unlockDocument }
+module.exports = { getDocument, getAllDocuments, createDocument, deleteDocument, lockDocument, unlockDocument }

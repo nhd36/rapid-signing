@@ -20,7 +20,7 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "column",
         color: "white",
-        ".MuiInputBase-input" : {
+        ".MuiInputBase-input": {
             color: "white"
         },
     },
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
         flexDirection: "column",
 
     },
-    
+
     textFieldStyle: {
         "& .MuiOutlinedInput-input": {
             color: "red"
@@ -58,32 +58,39 @@ const mocks = [
 const Manage = () => {
     let SERVER_URL_FETCH_FILES = `${process.env.REACT_APP_SERVER_PATH}/api/v1/files`;
     let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
-    
+
 
     const classes = useStyles();
     const [uploadStatus, setUploadStatus] = useState('')
     const [uploadSuccessMessage, setUploadSuccessMessage] = useState("Upload successfull!");
     const [uploadFailureMessage, setUploadFailureMessage] = useState("Upload failed. Try again later.");
     const [uploadedFile, setUploadedFile] = useState()
+    const [userDocuments, setUserDocuments] = useState([])
     const handleClick = async e => {
         e.preventDefault();
     }
 
     const fethcDocuments = () => {
-        fetch(SERVER_URL_FETCH_FILES)
-            .then(result => result.json())
-            .then((files) => {
-                this.setState({
-                    ...this.state,
-                    files
-                })
+        var config = {
+            method: 'get',
+            url: SERVER_URL_FETCH_FILES
+        };
+
+        axios(config)
+            .then(function (response) {
+                let result = JSON.stringify(response.data);
+                setUserDocuments(result);
+                console.log("fetched", result);
             })
-            .catch((error) => console.log(error));
-    }
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    };
 
     const uploadFile = (event) => {
         var file = event.target.files[0];
-        if (this.validateSize(event)) {
+        if (validateSize(event)) {
             this.setState({ status: "In progress...." });
             // if return true allow to setState
             const data = new FormData()
@@ -116,8 +123,8 @@ const Manage = () => {
     };
 
 
-
-
+    let documents = fethcDocuments();
+    console.log(documents)
     return (
         <Layout auth={true}>
             <div>
@@ -144,15 +151,15 @@ const Manage = () => {
                         </div>
                         <div className={classes.contentStyle}>
                             <form method="post" action="#" id="#" autoComplete="off">
-                            <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
-                            <Input fullWidth style={{ color: "white" }}  id="component-simple" value={"test"} onChange={e => {}} />
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
 
-                            <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
-                            <Input fullWidth style={{ color: "white" }}  id="component-simple" value={"test"} onChange={e => {}} />
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
 
-                            <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Your File:</InputLabel>
-                            <Input fullWidth style={{ color: "white" }}  id="component-simple" value={"test"} onChange={e => {}} />
-                               
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Your File:</InputLabel>
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+
                                 <TextField style={{ color: "white" }}
                                     name="upload-file"
                                     type="file"
@@ -162,18 +169,18 @@ const Manage = () => {
                                 />
                                 <br style={{ margin: "5%" }} />
                                 <br />
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        className={classes.button}
-                                        onClick={(e) => handleClick(e)}
-                                        startIcon={<CloudUploadIcon />}
-                                    >
-                                        Upload The Signed Document
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.button}
+                                    onClick={(e) => uploadFile(e)}
+                                    startIcon={<CloudUploadIcon />}
+                                >
+                                    Create Document
                                     </Button>
-                                    <br style={{ margin: "5%" }} />
-                                    <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
-                                    <Typography style={{ color: uploadStatus ? 'green' : 'red' }}>{uploadStatus}</Typography>
+                                <br style={{ margin: "5%" }} />
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
+                                <Typography style={{ color: uploadStatus ? 'green' : 'red' }}>{uploadStatus}</Typography>
                             </form>
                         </div>
                     </div>

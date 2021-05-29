@@ -9,6 +9,8 @@ import Signature from "./pages/Signature/Signature";
 
 function App() {
   const { token, setToken } = useToken();
+
+  console.log("localStorage", localStorage.getItem("token"));
   return (
     <div className="App">
       <BrowserRouter>

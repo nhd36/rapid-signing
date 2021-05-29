@@ -9,7 +9,7 @@ var cors = require('cors')
 const home = require('./endpoints/home');
 const login = require('./endpoints/login');
 const register = require('./endpoints/register');
-const { getDocument, createDocument, deleteDocument, lockDocument, unlockDocument } = require('./endpoints/document');
+const { getDocument, getAllDocuments, createDocument, deleteDocument, lockDocument, unlockDocument } = require('./endpoints/document');
 const { upload, getFile, uploadSingleFile, getAllFiles, searchByName } = require('./endpoints/files')
 
 // Server setup
@@ -44,6 +44,7 @@ app.get(`/api/${API_VERSION}`, home);
 app.post(`/api/${API_VERSION}/login`, login);
 app.post(`/api/${API_VERSION}/register`, register);
 app.post(`/api/${API_VERSION}/create-document`,  passport.authenticate("jwt", { session: false }), upload.single('file'), createDocument);
+app.get(`/api/${API_VERSION}/documents`, passport.authenticate("jwt", { session: false }),  getAllDocuments);
 app.get(`/api/${API_VERSION}/document/:id`, passport.authenticate("jwt", { session: false }),  getDocument);
 app.delete(`/api/${API_VERSION}/delete-document/:id`, passport.authenticate("jwt", { session: false }), deleteDocument);
 app.post(`/api/${API_VERSION}/lock-document/:id`,  passport.authenticate("jwt", { session: false }), lockDocument);
