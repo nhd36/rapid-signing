@@ -1,7 +1,7 @@
 import { makeStyles, Box, TextField, FormLabel, Button, Typography, InputLabel, Input } from "@material-ui/core"
 import Layout from "../Layout"
 import DocumentBox from "./components/DocumentBox"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 const axios = require("axios");
 
@@ -57,6 +57,7 @@ const mocks = [
 
 const Manage = () => {
     let SERVER_URL_FETCH_FILES = `${process.env.REACT_APP_SERVER_PATH}/api/v1/files`;
+    let SERVER_URL_FETCH_DOCUMENTS = `${process.env.REACT_APP_SERVER_PATH}/api/v1/documents`;
     let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
 
 
@@ -66,6 +67,7 @@ const Manage = () => {
     const [uploadFailureMessage, setUploadFailureMessage] = useState("Upload failed. Try again later.");
     const [uploadedFile, setUploadedFile] = useState()
     const [userDocuments, setUserDocuments] = useState([])
+
     const handleClick = async e => {
         e.preventDefault();
     }
@@ -73,14 +75,13 @@ const Manage = () => {
     const fethcDocuments = () => {
         var config = {
             method: 'get',
-            url: SERVER_URL_FETCH_FILES
+            url: SERVER_URL_FETCH_DOCUMENTS
         };
 
         axios(config)
             .then(function (response) {
                 let result = JSON.stringify(response.data);
-                setUserDocuments(result);
-                console.log("fetched", result);
+                setUserDocuments(result['documents']);
             })
             .catch(function (error) {
                 console.log(error);
@@ -122,9 +123,15 @@ const Manage = () => {
         return true
     };
 
+    // Similar to componentDidMount and componentDidUpdate:
+    useEffect(() => {
+        // Update the document title using the browser API
+        fethcDocuments();
+        // console.log(userDocuments)
+    });
 
-    let documents = fethcDocuments();
-    console.log(documents)
+
+
     return (
         <Layout auth={true}>
             <div>
@@ -135,11 +142,11 @@ const Manage = () => {
                             <p>You can see all the documents you created or received here.</p>
                         </div>
                         <div style={{ width: "100%" }}>
-                            {mocks.map((data, index) => {
+                            {/* {userDocuments.map((documentId, index) => {
                                 return (
-                                    <DocumentBox data={data} id={index} />
+                                    <DocumentBox data={documentId} id={index} />
                                 )
-                            })}
+                            })} */}
                         </div>
                     </div>
                 </Box>

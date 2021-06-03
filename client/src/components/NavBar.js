@@ -120,9 +120,9 @@ const NavBar = ({ auth }) => {
                     )}
                     {!auth && (
                         <div style={{ display: "flex" }}>
-                            <Link to="/manage">
+                            {/* <Link to="/manage">
                                 <Button className={classes.buttonLayout} style={{backgroundColor: "red"}}> Manage </Button>
-                            </Link>
+                            </Link> */}
                             <Link to="/login">
                                 <Button className={classes.buttonLayout}> Sign In </Button>
                             </Link>
