@@ -60,9 +60,9 @@ const DocumentBox = ({ data }) => {
     return (
         <Box boxShadow={5} className={classes.root}>
             <div className={classes.documentContent}>
-                <h3>{data.doc_name}</h3>
+                <h3>{data.documentId}</h3>
                 <span style={{ fontStyle: "italic" }}>
-                    created at: {data.created_at}
+                    created at: {"1232131"}
                 </span>
             </div>
             <div className={classes.documentButtonBox}>
