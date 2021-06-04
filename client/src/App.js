@@ -30,9 +30,7 @@ function App() {
       sessionStorage.setItem("token", null)
       window.location.href = "./login";
     }
-  } else {
-    window.location.href = "./login";
-  }
+  } 
 
   return (
     <div className="App">
