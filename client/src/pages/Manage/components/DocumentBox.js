@@ -33,16 +33,27 @@ const useStyles = makeStyles({
         borderRadius: "50px",
         color: "white",
     },
-    popover:{
+    popover: {
         padding: "10px",
         height: "50px",
         fontWeight: 900,
-        color:"black"
+        color: "black"
+    },
+    versionList:{
+        border: "1px solid lightgrey",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "2px",
+        padding: "4% 5% 4% 5%",
+        justifyContent: "space-between",
+        marginBottom: "1em",
+        width: "300px",
+        textAlign: "center",
     }
 })
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
 
-const DocumentBox = ({ data, triggerParentUpdate}) => {
+const DocumentBox = ({ data, triggerParentUpdate }) => {
 
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -120,20 +131,30 @@ const DocumentBox = ({ data, triggerParentUpdate}) => {
                 <div>
                     Signatures :
                     {data.versions && (
-                        <ol>
-                            {data.versions.map((version, index) =>
-                                <li key={index}>{version.versionId} signed by {version.signedBy}
-                                    <Button
-                                        className={classes.downloadButton}
-                                        style={{ backgroundColor: "blue" }}
-                                        onClick={(e) => downloadFile(version.versionId)}
-                                        startIcon={<GetAppIcon />}
-                                    >
-                                        Download
-                                    </Button>
-                                </li>
-                            )}
-                        </ol>
+                        <div>
+                            <ol style={{ color:"white", listStylePosition: "inside" }}>
+                                {data.versions.map((version, index) =>
+                                <div className={classes.versionList}>
+                                    <li style={{display: "list-item"}} key={index}>
+                                        {version.versionId} 
+                                        <br></br>
+                                            <span style={{ fontStyle: "italic" }}>signed by</span>
+                                        <br></br>
+                                        {version.signedBy}
+                                        <br></br>
+                                        <Button
+                                            className={classes.downloadButton}
+                                            style={{ backgroundColor: "blue" }}
+                                            onClick={(e) => downloadFile(version.versionId)}
+                                            startIcon={<GetAppIcon />}
+                                        >
+                                            Download
+                                        </Button>
+                                    </li>
+                                    </div>
+                                )}
+                            </ol>
+                        </div>
                     )}
                     {data.versions.length === 0 && (
                         <>
