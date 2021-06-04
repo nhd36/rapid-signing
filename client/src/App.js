@@ -37,7 +37,7 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            <Landing />
+            <Landing userEmail={userEmail} />
           </Route>
           <ProtectedRoute exact path="/manage" component={Manage} userEmail={userEmail} />
           <Route exact path="/login">

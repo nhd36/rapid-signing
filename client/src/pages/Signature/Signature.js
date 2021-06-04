@@ -163,7 +163,7 @@ const Signature = () => {
 
 
     return (
-        <Layout auth={false}>
+        <Layout auth={true}>
 
             <Box boxShadow={20} className={classes.root}>
                 <div className={classes.h}>
