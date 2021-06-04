@@ -9,10 +9,10 @@ import Influencer from "../../assets/usecases/influencer.svg";
 import OnlineEverywhere from "../../assets/usecases/online_everywhere.svg";
 
 
-const Landing = () => {
+const Landing = ({userEmail}) => {
   return (
     <div>
-      <Layout auth={false} />
+      <Layout auth={userEmail != null ? true : false} />
       <div className="content">
         <div className="hero-image">
           <div className="hero-text">
