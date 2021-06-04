@@ -1,11 +1,10 @@
-import { Box, Button, makeStyles } from "@material-ui/core";
+import { Box, Button, makeStyles, Modal, Paper } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import GetAppIcon from '@material-ui/icons/GetApp';
 import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
 import { useState } from "react";
-
+import VersionBox from "./VersionBox"
 
 const useStyles = makeStyles({
     root: {
@@ -39,21 +38,16 @@ const useStyles = makeStyles({
         fontWeight: 900,
         color: "black"
     },
-    versionList:{
-        border: "1px solid lightgrey",
+    documentContent: {
         display: "flex",
         flexDirection: "column",
-        borderRadius: "2px",
-        padding: "4% 5% 4% 5%",
-        justifyContent: "space-between",
-        marginBottom: "1em",
-        width: "300px",
-        textAlign: "center",
+        justifyContent: "center",
     }
 })
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
 
 const DocumentBox = ({ data, triggerParentUpdate }) => {
+    const [version, setVersion] = useState(false)
 
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -111,7 +105,7 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
         document.execCommand("copy");
         document.body.removeChild(hiddenLink);
     }
-
+    console.log(data.versions)
     return (
         <Box boxShadow={5} className={classes.root}>
             <div className={classes.documentContent}>
@@ -129,38 +123,66 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                     Created By: {data.userEmail}
                 </div>
                 <div>
-                    Signatures :
-                    {data.versions && (
-                        <div>
-                            <ol style={{ color:"white", listStylePosition: "inside" }}>
-                                {data.versions.map((version, index) =>
-                                <div className={classes.versionList}>
-                                    <li style={{display: "list-item"}} key={index}>
-                                        {version.versionId} 
-                                        <br></br>
-                                            <span style={{ fontStyle: "italic" }}>signed by</span>
-                                        <br></br>
-                                        {version.signedBy}
-                                        <br></br>
-                                        <Button
-                                            className={classes.downloadButton}
-                                            style={{ backgroundColor: "blue" }}
-                                            onClick={(e) => downloadFile(version.versionId)}
-                                            startIcon={<GetAppIcon />}
-                                        >
-                                            Download
-                                        </Button>
-                                    </li>
-                                    </div>
-                                )}
-                            </ol>
-                        </div>
-                    )}
-                    {data.versions.length === 0 && (
-                        <>
-                            <h4>No signatures received</h4>
-                        </>
-                    )}
+                    <Button
+                        className={classes.customizedButton}
+                        style={{ backgroundColor: "blue", marginTop: "2%" }}
+                        onClick={() => setVersion(true)}
+                    >
+                        SIGNATURES
+                    </Button>
+                    <Modal
+                        open={version}
+                        onClose={() => setVersion(false)}
+                    >
+                        <Box style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100vh"
+                        }}>
+                            <Paper style={{
+                                width: "50vw",
+                                height: "50vh",
+                                borderRadius: "50px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}>
+
+                                <Box style={{
+                                    width: "80%",
+                                    height: "80%",
+                                    overflowY: "scroll",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    {data.versions && (
+                                        <div style={{width: "90%"}}>
+                                            <ol style={{ 
+                                                color: "black",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                flexDirection: "column",
+                                                alignItems: "center"
+                                            }}>
+                                                {data.versions.map((version, index) =>
+                                                    <VersionBox key={index} downloadFile={downloadFile} version={version}/>
+                                                )}
+                                            </ol>
+                                        </div>
+                                    )}
+                                </Box>
+                                <Box>
+                                    {data.versions.length === 0 && (
+                                        <>
+                                            <h4>No signatures received</h4>
+                                        </>
+                                    )}
+                                </Box>
+                            </Paper>
+                        </Box>
+                    </Modal>
                 </div>
             </div>
             <div className={classes.documentButtonBox}>
@@ -170,7 +192,7 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                         style={{ backgroundColor: "blue" }}
                     >
                         SHARE TO SIGN
-                </Button>
+                    </Button>
                 </Link>
                 <Button
                     className={classes.customizedButton}
@@ -178,6 +200,20 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                     onClick={(e) => copyLink(e, data._id)}
                 >
                     COPY LINK
+                </Button>
+                <Button
+                    className={classes.customizedButton}
+                    style={{ backgroundColor: "blue" }}
+                    onClick={(e) => copyLink(e, data._id)}
+                >
+                    LOCK
+                </Button>
+                <Button
+                    className={classes.customizedButton}
+                    style={{ backgroundColor: "blue" }}
+                    onClick={(e) => copyLink(e, data._id)}
+                >
+                    UNLOCK
                 </Button>
                 <Popover
                     id={id}

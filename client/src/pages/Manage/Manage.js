@@ -45,7 +45,7 @@ let SERVER_URL_FETCH_DOCUMENTS = `${process.env.REACT_APP_SERVER_PATH}/api/v1/do
 let SERVER_URL_DELETE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/delete-document`;
 
 
-const Manage = ({userEmail}) => {
+const Manage = ({ userEmail }) => {
     const classes = useStyles();
     const [uploadStatus, setUploadStatus] = useState({ success: false, message: "" })
     const [uploadedFile, setUploadedFile] = useState({ fileName: "", fileDescription: "", chosenFile: "" });
@@ -181,11 +181,14 @@ const Manage = ({userEmail}) => {
                         </div>
                         <div className={classes.contentStyle}>
                             <form action="#" id="#" autoComplete="off" onSubmit={e => { uploadFile(e) }}>
-                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileName" type="text" value={uploadedFile.fileName} onChange={handleFormChange} />
-
-                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileDescription" type="text" value={uploadedFile.fileDescription} onChange={handleFormChange} />
+                                <Box style={{ margin: "1% 0" }}>
+                                    <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
+                                    <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileName" type="text" value={uploadedFile.fileName} onChange={handleFormChange} />
+                                </Box>
+                                <Box style={{ margin: "2% 0" }}>
+                                    <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
+                                    <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileDescription" type="text" value={uploadedFile.fileDescription} onChange={handleFormChange} />
+                                </Box>
 
                                 <TextField style={{ color: "white" }}
                                     name="chosenFile"
@@ -206,9 +209,11 @@ const Manage = ({userEmail}) => {
                                 >
                                     Create Document
                                     </Button>
-                                <br style={{ margin: "5%" }} />
-                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
-                                <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
+                                <Box style={{ margin: "5% 0 0 0" }}>
+                                    <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
+                                    <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
+
+                                </Box>
                             </form>
                         </div>
                     </div>
