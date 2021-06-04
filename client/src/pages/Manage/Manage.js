@@ -89,6 +89,7 @@ const Manage = ({userEmail}) => {
             setUploadStatus({ success: true, message: "In progress...." });
             // if return true allow to setState
             const data = new FormData();
+            console.log(userEmail)
             data.append('file', file);
             data.append('userEmail', userEmail);
             data.append('documentName', uploadedFile.fileName);
