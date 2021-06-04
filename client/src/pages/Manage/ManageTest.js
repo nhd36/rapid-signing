@@ -65,8 +65,11 @@ const Manage = () => {
     const [uploadStatus, setUploadStatus] = useState('')
     const [uploadSuccessMessage, setUploadSuccessMessage] = useState("Upload successfull!");
     const [uploadFailureMessage, setUploadFailureMessage] = useState("Upload failed. Try again later.");
-    const [uploadedFile, setUploadedFile] = useState()
-    const [userDocuments, setUserDocuments] = useState([])
+    const [uploadedFile, setUploadedFile] = useState();
+    const [userDocuments, setUserDocuments] = useState([]);
+    const [fileName, setFileName] = useState();
+    const [fileDesc, setFileDesc] = useState();
+    const [uploadText, setUploadText] = useState();
 
     const handleClick = async e => {
         e.preventDefault();
@@ -90,29 +93,32 @@ const Manage = () => {
     };
 
     const uploadFile = (event) => {
-        var file = event.target.files[0];
+        //alert(uploadedFile);
+        //var file = event.target.files[0];
+        var file = uploadedFile;
         if (validateSize(event)) {
-            this.setState({ status: "In progress...." });
+            setUploadStatus("In progress....");
             // if return true allow to setState
             const data = new FormData()
             data.append('file', file)
             axios.post(SERVER_URL_UPLOAD_FILE, data)
                 .then(res => { // then print response status
-                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
-                    this.setState({ uploadStatus: true });
+                    setUploadStatus( uploadSuccessMessage );
+                    setUploadStatus(true);
                     console.log('Upload is successful.', res);
                     this.fetchApiToFiles(SERVER_URL_FETCH_FILES); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
-                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
-                    this.setState({ uploadStatus: false });
+                    setUploadStatus(`${this.uploadFailureMessage} Reason: ${err}`);
+                    setUploadStatus(false);
                     console.log('Upload failed', err);
                 })
         }
     }
 
     const validateSize = (event) => {
-        let file = event.target.files[0];
+        //let file = event.target.files[0];
+        let file = uploadedFile;
         let size = 30000;
         let err = '';
         console.log(file.size);
@@ -157,30 +163,30 @@ const Manage = () => {
                             <p>You can upload a document here so that others can sign it.</p>
                         </div>
                         <div className={classes.contentStyle}>
-                            <form method="post" action="#" id="#" autoComplete="off">
+                            <form action="#" id="#" autoComplete="off" onSubmit={e => { uploadFile(e) }}>
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="file-name" type="text" value={"test"} onChange={e => setFileName(e.target.value)} />
 
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="file-desc" type="text" value={"test"} onChange={e => setFileDesc(e.target.value)} />
 
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Your File:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="upload-text" type="text" value={"test"} onChange={e => setUploadText(e.target.value)} />
 
                                 <TextField style={{ color: "white" }}
                                     name="upload-file"
                                     type="file"
                                     required
                                     fullWidth
-                                    onChange={e => { }}
+                                    onChange={e => setUploadedFile(e.target.files[0])}
                                 />
                                 <br style={{ margin: "5%" }} />
                                 <br />
                                 <Button
                                     variant="contained"
                                     color="primary"
+                                    type="submit"
                                     className={classes.button}
-                                    onClick={(e) => uploadFile(e)}
                                     startIcon={<CloudUploadIcon />}
                                 >
                                     Create Document
