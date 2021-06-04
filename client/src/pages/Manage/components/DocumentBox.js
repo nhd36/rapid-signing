@@ -42,10 +42,13 @@ const useStyles = makeStyles({
     versionList:{
         border: "1px solid lightgrey",
         display: "flex",
+        flexDirection: "column",
         borderRadius: "2px",
-        minWidth: "300px",
-        marginBottom: "20px",
-        textAlign: "right"
+        padding: "4% 5% 4% 5%",
+        justifyContent: "space-between",
+        marginBottom: "1em",
+        width: "300px",
+        textAlign: "center",
     }
 })
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
@@ -128,11 +131,17 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                 <div>
                     Signatures :
                     {data.versions && (
-                        <div  style={{ display: "flex", flexDirection: "column", maxWidth:"100px" }}>
-                            <ol style={{ color:"white"}}>
+                        <div>
+                            <ol style={{ color:"white", listStylePosition: "inside" }}>
                                 {data.versions.map((version, index) =>
                                 <div className={classes.versionList}>
-                                    <li key={index}>{version.versionId} signed by {version.signedBy}
+                                    <li style={{display: "list-item"}} key={index}>
+                                        {version.versionId} 
+                                        <br></br>
+                                            <span style={{ fontStyle: "italic" }}>signed by</span>
+                                        <br></br>
+                                        {version.signedBy}
+                                        <br></br>
                                         <Button
                                             className={classes.downloadButton}
                                             style={{ backgroundColor: "blue" }}
@@ -140,7 +149,7 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                             startIcon={<GetAppIcon />}
                                         >
                                             Download
-                                    </Button>
+                                        </Button>
                                     </li>
                                     </div>
                                 )}
