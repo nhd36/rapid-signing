@@ -57,13 +57,14 @@ const upload = multer({
 async function uploadSingleFile(req, res) {
     console.log("req.file", req.file);
     console.log("req.body.id", req.body.id);
+    console.log("req.body.signedBy", req.body.signedBy);
     try {
         const document = await Document.findById({ _id: ObjectId(req.body.id) });
         if (!document) return res.status(404).send({ success: false, message: "Document doesn't exist. " });
-        document.versions.push(req.file.id);
+        document.versions.push({ versionId: req.file.id, signedBy: req.body.signedBy });
         document.lastVersionId = req.file.id; // We need to keep track the last version that has been uploaded.
         await document.save();
-        return res.json({ success: true, id: req.file.id, file: req.file.originalname, document: document });    
+        return res.json({ success: true, id: req.file.id, file: req.file.originalname, document: document });
     } catch (err) {
         console.log("Error occurred", err)
         res.status(404).json({ success: false, error: 'Your document is not fetched. A technical error occurred. Please try again later.' })

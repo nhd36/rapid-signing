@@ -1,6 +1,6 @@
-import { makeStyles, useForkRef } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import Layout from "../Layout"
-import { TextField, Box, Typography, Button } from "@material-ui/core";
+import { TextField, Box, Typography, Button, InputLabel } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -37,16 +37,64 @@ const useStyles = makeStyles({
 
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
 let SERVER_URL_GET_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/document`;
+let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
 
 const Signature = () => {
     console.log("Inside Signature",)
     const classes = useStyles();
+    const [uploadStatus, setUploadStatus] = useState({ success: false, message: "" })
+    const [uploadedFile, setUploadedFile] = useState({ signedBy: "", chosenFile: "" });
     const [lastVersionId, setLastVersionId] = useState("")
     const { documentId } = useParams();
-    console.log("documentId", documentId)
-    const handleClick = async e => {
-        e.preventDefault();
+
+    const selectFile = (event) => {
+        setUploadedFile(prevDocument => ({ ...prevDocument, [event.target.name]: event.target.files[0] }));
+    };
+
+    const uploadFile = (event) => {
+        event.preventDefault();
+        var file = uploadedFile.chosenFile;
+        if (validateSize(event)) {
+            setUploadStatus({ success: true, message: "In progress...." });
+            // if return true allow to setState
+            const data = new FormData();
+            data.append('file', file);
+            data.append('id', documentId);
+            data.append('signedBy', uploadedFile.signedBy);
+
+            var config = {
+                method: 'post',
+                url: SERVER_URL_UPLOAD_FILE,
+                data: data
+            };
+
+            axios(config)
+                .then(res => { // then print response status
+                    setUploadStatus({ success: true, message: "Upload successfull!" });
+                    console.log('Upload is successful.', res);
+                    alert('Upload is successful.', res);
+                })
+                .catch(err => { // then print response status
+                    setUploadStatus({ success: false, message: "Upload failed. Try again later." });
+                    console.log('Upload failed', err);
+                    alert(err)
+                })
+        }
     }
+
+    const validateSize = (event) => {
+        //let file = event.target.files[0];
+        let file = uploadedFile;
+        let size = 30000;
+        let err = '';
+        console.log(file.size);
+        if (file.size > size) {
+            err = file.type + 'is too large, please pick a smaller file\n';
+            console.log(err);
+        }
+        return true
+    };
+
 
 
     const fetchDocument = async (documentId) => {
@@ -107,6 +155,13 @@ const Signature = () => {
         fetchDocument(documentId);
     }, [documentId]);
 
+    // handle change event of the input
+    const handleFormChange = e => {
+        e.persist();
+        setUploadedFile(prevDocument => ({ ...prevDocument, [e.target.name]: e.target.value }));
+    }
+
+
     return (
         <Layout auth={false}>
 
@@ -125,16 +180,19 @@ const Signature = () => {
                     inputStyle={{ textAlign: 'center' }}
                     id="standard-basic"
                     label="Email"
+                    name="signedBy"
                     fullWidth
                     required
-                    onChange={e => { }}
+                    value={uploadedFile.signedBy}
+                    onChange={handleFormChange}
                 />
                 <br style={{ margin: "5%" }} />
                 <TextField
-                    name="upload-file"
+                    name="chosenFile"
                     type="file"
                     required
-                    onChange={e => { }}
+                    defaultValue={uploadedFile.chosenFile}
+                    onChange={selectFile}
                 />
                 <br style={{ margin: "5%" }} />
                 <br />
@@ -151,11 +209,14 @@ const Signature = () => {
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        onClick={(e) => handleClick(e)}
+                        onClick={(e) => uploadFile(e)}
                         startIcon={<CloudUploadIcon />}
                     >
                         Upload The Signed Document
                     </Button>
+                    <br style={{ margin: "5%" }} />
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
+                                <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
                 </div>
             </Box>
         </Layout>

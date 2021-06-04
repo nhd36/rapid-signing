@@ -40,11 +40,9 @@ const useStyles = makeStyles({
         color:"black"
     }
 })
-let SERVER_URL_GET_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/document`;
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
-let SERVER_URL_DELETE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/delete-document`;
 
-const DocumentBox = ({ data }) => {
+const DocumentBox = ({ data, triggerParentUpdate}) => {
 
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -57,25 +55,8 @@ const DocumentBox = ({ data }) => {
     const id = open ? 'simple-popover' : undefined;
 
 
-    const deleteDocument = (documentId) => {
-
-        var config = {
-            method: 'delete',
-            url: `${SERVER_URL_DELETE_DOCUMENT}/${documentId}`
-        };
-
-        axios(config)
-            .then(function (response) {
-                console.log("inside deletedocument")
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
 
     const downloadFile = (fileId) => {
-        console.log(fileId)
         var config = {
             method: 'GET',
             url: `${SERVER_URL_GET_FILE}/${fileId}`
@@ -83,8 +64,6 @@ const DocumentBox = ({ data }) => {
 
         axios(config)
             .then(function (response) {
-                console.log(response)
-                console.log(JSON.stringify(response.data));
                 // Create blob link to download
                 const url = window.URL.createObjectURL(
                     new Blob([response.data]),
@@ -143,11 +122,11 @@ const DocumentBox = ({ data }) => {
                     {data.versions && (
                         <ol>
                             {data.versions.map((version, index) =>
-                                <li key={index}>{version}
+                                <li key={index}>{version.versionId} signed by {version.signedBy}
                                     <Button
                                         className={classes.downloadButton}
                                         style={{ backgroundColor: "blue" }}
-                                        onClick={(e) => downloadFile(version)}
+                                        onClick={(e) => downloadFile(version.versionId)}
                                         startIcon={<GetAppIcon />}
                                     >
                                         Download
@@ -198,7 +177,7 @@ const DocumentBox = ({ data }) => {
                 <Button
                     className={classes.customizedButton}
                     style={{ backgroundColor: "red" }}
-                    onClick={() => deleteDocument(data._id)}
+                    onClick={() => triggerParentUpdate(data._id)}
                 >
                     Delete
                 </Button>

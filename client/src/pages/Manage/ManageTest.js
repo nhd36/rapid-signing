@@ -1,6 +1,6 @@
-import { makeStyles, Box, TextField, FormLabel, Button, Typography, InputLabel, Input } from "@material-ui/core"
+import { makeStyles, Box, TextField, Button, Typography, InputLabel, Input } from "@material-ui/core"
 import Layout from "../Layout"
-import DocumentBox from "./components/DocumentBox"
+import DocumentBox from "./components/DocumentBox";
 import { useState, useEffect } from "react";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 const axios = require("axios");
@@ -40,37 +40,24 @@ const useStyles = makeStyles({
     }
 })
 
-const mocks = [
-    {
-        doc_name: "Document 1",
-        created_at: "10:50:50 12/2/2020"
-    },
-    {
-        doc_name: "Document 2",
-        created_at: "10:50:50 12/2/2020"
-    },
-    {
-        doc_name: "Document 3",
-        created_at: "10:50:50 12/2/2020"
-    },
-]
+let SERVER_URL_CREATE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/create-document`;
+let SERVER_URL_FETCH_DOCUMENTS = `${process.env.REACT_APP_SERVER_PATH}/api/v1/documents`;
+let SERVER_URL_DELETE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/delete-document`;
+
 
 const Manage = () => {
-    let SERVER_URL_FETCH_FILES = `${process.env.REACT_APP_SERVER_PATH}/api/v1/files`;
-    let SERVER_URL_FETCH_DOCUMENTS = `${process.env.REACT_APP_SERVER_PATH}/api/v1/documents`;
-    let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
-
-
     const classes = useStyles();
-    const [uploadStatus, setUploadStatus] = useState('')
-    const [uploadSuccessMessage, setUploadSuccessMessage] = useState("Upload successfull!");
-    const [uploadFailureMessage, setUploadFailureMessage] = useState("Upload failed. Try again later.");
-    const [uploadedFile, setUploadedFile] = useState()
-    const [userDocuments, setUserDocuments] = useState([])
+    const [uploadStatus, setUploadStatus] = useState({ success: false, message: "" })
+    const [uploadedFile, setUploadedFile] = useState({ fileName: "", fileDescription: "", chosenFile: "" });
+    const [userDocuments, setUserDocuments] = useState([]);
 
-    const handleClick = async e => {
-        e.preventDefault();
+
+    // handle change event of the input
+    const handleFormChange = e => {
+        e.persist();
+        setUploadedFile(prevDocument => ({ ...prevDocument, [e.target.name]: e.target.value }));
     }
+
 
     const fetchDocuments = () => {
         var config = {
@@ -81,9 +68,6 @@ const Manage = () => {
         axios(config)
             .then(function (response) {
                 let result = response.data;
-                console.log("result['documents']", result['documents'])
-                console.log("result", result)
-                console.log("result.documents", result.documents)
                 setUserDocuments(result["documents"]);
             })
             .catch(function (error) {
@@ -93,32 +77,48 @@ const Manage = () => {
     };
 
     const uploadFile = (event) => {
-        var file = event.target.files[0];
+        event.preventDefault();
+        if (uploadedFile.fileDescription === "" ||
+            uploadedFile.fileName === "" ||
+            uploadedFile.chosenFile === "") {
+            setUploadStatus({ success: false, message: "Fields cannot be empty." });
+            return;
+        }
+        var file = uploadedFile.chosenFile;
         if (validateSize(event)) {
-            this.setState({ status: "In progress...." });
+            setUploadStatus({ success: true, message: "In progress...." });
             // if return true allow to setState
-            const data = new FormData()
-            data.append('file', file)
-            axios.post(SERVER_URL_UPLOAD_FILE, data)
+            const data = new FormData();
+            data.append('file', file);
+            data.append('userEmail', 'ya332@drexel.edu');
+            data.append('documentName', uploadedFile.fileName);
+            data.append('documentDescription', uploadedFile.fileDescription);
+
+            var config = {
+                method: 'post',
+                url: SERVER_URL_CREATE_DOCUMENT,
+                data: data
+            };
+
+            axios(config)
                 .then(res => { // then print response status
-                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
-                    this.setState({ uploadStatus: true });
-                    console.log('Upload is successful.', res);
-                    this.fetchApiToFiles(SERVER_URL_FETCH_FILES); // get all documents that belong to user
+                    setUploadStatus({ success: true, message: "Upload successfull!" });
+                    alert('Upload is successful.', res);
+                    fetchDocuments(); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
-                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
-                    this.setState({ uploadStatus: false });
+                    setUploadStatus({ success: false, message: "Upload failed. Try again later." });
                     console.log('Upload failed', err);
+                    alert(err)
                 })
         }
     }
 
     const validateSize = (event) => {
-        let file = event.target.files[0];
+        //let file = event.target.files[0];
+        let file = uploadedFile;
         let size = 30000;
         let err = '';
-        console.log(file.size);
         if (file.size > size) {
             err = file.type + 'is too large, please pick a smaller file\n';
             console.log(err);
@@ -130,9 +130,28 @@ const Manage = () => {
     useEffect(() => {
         // Update the document title using the browser API
         fetchDocuments();
-        // console.log(userDocuments)
     }, []);
 
+    const selectFile = (event) => {
+        setUploadedFile(prevDocument => ({ ...prevDocument, [event.target.name]: event.target.files[0] }));
+    };
+
+    const deleteDocument = (documentId) => {
+        alert("Deleting document with id:" + documentId);
+        var config = {
+            method: 'delete',
+            url: `${SERVER_URL_DELETE_DOCUMENT}/${documentId}`
+        };
+
+        axios(config)
+            .then(function (response) {
+                alert("Document deleted:" + JSON.stringify(response.data))
+                fetchDocuments();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
 
     return (
@@ -147,7 +166,7 @@ const Manage = () => {
                         <div style={{ width: "100%" }}>
                             {userDocuments.map((data, index) => {
                                 return (
-                                    <DocumentBox data={data} id={index} />
+                                    <DocumentBox data={data} id={index} triggerParentUpdate={deleteDocument} />
                                 )
                             })}
                         </div>
@@ -160,37 +179,35 @@ const Manage = () => {
                             <p>You can upload a document here so that others can sign it.</p>
                         </div>
                         <div className={classes.contentStyle}>
-                            <form method="post" action="#" id="#" autoComplete="off">
+                            <form action="#" id="#" autoComplete="off" onSubmit={e => { uploadFile(e) }}>
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileName" type="text" value={uploadedFile.fileName} onChange={handleFormChange} />
 
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
-
-                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Your File:</InputLabel>
-                                <Input fullWidth style={{ color: "white" }} id="component-simple" value={"test"} onChange={e => { }} />
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileDescription" type="text" value={uploadedFile.fileDescription} onChange={handleFormChange} />
 
                                 <TextField style={{ color: "white" }}
-                                    name="upload-file"
+                                    name="chosenFile"
                                     type="file"
                                     required
                                     fullWidth
-                                    onChange={e => { }}
+                                    defaultValue={uploadedFile.chosenFile}
+                                    onChange={selectFile}
                                 />
                                 <br style={{ margin: "5%" }} />
                                 <br />
                                 <Button
                                     variant="contained"
                                     color="primary"
+                                    type="submit"
                                     className={classes.button}
-                                    onClick={(e) => uploadFile(e)}
                                     startIcon={<CloudUploadIcon />}
                                 >
                                     Create Document
                                     </Button>
                                 <br style={{ margin: "5%" }} />
                                 <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
-                                <Typography style={{ color: uploadStatus ? 'green' : 'red' }}>{uploadStatus}</Typography>
+                                <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
                             </form>
                         </div>
                     </div>

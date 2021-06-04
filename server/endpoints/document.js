@@ -115,8 +115,10 @@ async function getAllDocuments(req, res) {
  */
 async function deleteDocument(req, res) {
     try {
-        await Document.findOneAndRemove({ _id: req.query.id });
-        return res.status(200).send({ success: true, message: "Document is deleted" });
+        await Document.findOneAndRemove({ _id: req.params.id });
+        const document = await Document.findById({ _id: req.params.id });
+        if (!document) return res.status(200).send({ success: true, message: "Document is deleted" });
+        return res.status(404).send({ success: false, message: "Document still exist. " + req.params.id });
     } catch (err) {
         res.status(404).json({ success: false, error: 'Your Document is not deleted. A technical error occurred. Please try again later.' })
         return
