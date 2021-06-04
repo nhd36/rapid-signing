@@ -35,8 +35,7 @@ const documentSchema = new Schema({
     },
     versions: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'uploads.files'
+            type: Object,
         }
     ],
     user: {
