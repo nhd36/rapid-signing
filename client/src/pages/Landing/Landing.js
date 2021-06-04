@@ -13,14 +13,14 @@ const Landing = () => {
   return (
     <div>
       <Layout auth={false} />
-      <div class="content">
-        <div class="hero-image">
-          <div class="hero-text">
-            <h1 class="welcome">Welcome to RapidSign</h1>
+      <div className="content">
+        <div className="hero-image">
+          <div className="hero-text">
+            <h1 className="welcome">Welcome to RapidSign</h1>
             <p>Collecting signatures has never been faster.</p>
           </div>
         </div>
-        <div class="information">
+        <div className="information">
           <h1>RapidSign!</h1>
           <h3>RapidSign allows you to quickly upload a pdf document, share it, and have it signed.</h3>
           <p>Upload your document</p>
@@ -30,8 +30,8 @@ const Landing = () => {
 
         </div>
       </div>
-      <div class="sections">
-        <div class="section feature">
+      <div className="sections">
+        <div className="section feature">
           <div>
             <h2>Meet John, Thesis Student</h2>
             <p
@@ -43,7 +43,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div class="section feature feature-right">
+        <div className="section feature feature-right">
           <div>
             <h2>Meet Alice, Marketing Club President </h2>
             <p>
@@ -55,7 +55,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div class="section feature">
+        <div className="section feature">
           <div>
             <h2>Meet John, Recruiter</h2>
             <p>John is a recruiter for a big tech company and used RapidSign to extend the offer letter to the applicant. Applicant signed the form in RapidSign's secure platform. </p>
@@ -65,7 +65,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div class="section feature">
+        <div className="section feature">
           <div>
             <img alt="feature" src={Influencer} />
           </div>
@@ -77,7 +77,7 @@ const Landing = () => {
         </div>
 
 
-        <div class="bottom-section section">
+        <div className="bottom-section section">
           <h2>Supercharge Your Forms with RapidSign Now for Free.
               <br></br>
               No credit card required.
@@ -86,12 +86,12 @@ const Landing = () => {
           <img alt="feature" src={OnlineEverywhere} />
           <p>&nbsp;</p>
           <p>
-            <Link class="get-started-btn" to="/register">Get Started for Free</Link>
+            <Link className="get-started-btn" to="/register">Get Started for Free</Link>
           </p>
         </div>
 
-        <div class="footer">
-          <div class="copyright">
+        <div className="footer">
+          <div className="copyright">
             Copyright © 2021 <Link to="/">RapidSign</Link>. All rights reserved.
             </div>
         </div>

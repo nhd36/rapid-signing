@@ -111,24 +111,24 @@ class Manage extends React.Component {
                     </table>
                     <div id="my-documents-list">⚠️ No documents created/received for this user ⚠️</div>
 
-                    <hr class="rounded" />
+                    <hr className="rounded" />
                     <h2>Create New Document ✏️</h2>
                     <p>You can upload a document here so that others can sign it.</p>
                     <div className="upload-form-container">
                         <form method="post" action="#" id="#">
-                            <span class="label-holder"><label for="name">File Name:</label></span>
-                            <span class="input-holder"><input type="text" id="name" name="name" placeholder="File Name" /></span>
+                            <span className="label-holder"><label for="name">File Name:</label></span>
+                            <span className="input-holder"><input type="text" id="name" name="name" placeholder="File Name" /></span>
 
-                            <span class="label-holder"><label for="description">Description:</label></span>
-                            <span class="input-holder"><input type="text" id="description" name="description" placeholder="File Description" /></span>
+                            <span className="label-holder"><label for="description">Description:</label></span>
+                            <span className="input-holder"><input type="text" id="description" name="description" placeholder="File Description" /></span>
 
-                            <span class="label-holder"><label for="file">File</label></span>
-                            <span class="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler} /></span>
+                            <span className="label-holder"><label for="file">File</label></span>
+                            <span className="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler} /></span>
                             {/* <div>
                         <button width="100%" type="button" onClick={this.fileUploadHandler}>Upload File</button>
                     </div> */}
-                            <span class="label-holder"><label for="status">Upload Status:</label></span>
-                            <span class="input-holder"><pre className="status">{this.state.status}</pre></span>
+                            <span className="label-holder"><label for="status">Upload Status:</label></span>
+                            <span className="input-holder"><pre className="status">{this.state.status}</pre></span>
                         </form>
 
                     </div>

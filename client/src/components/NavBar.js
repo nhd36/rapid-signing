@@ -67,73 +67,75 @@ const NavBar = ({ auth }) => {
         history.push('/login')
     }
     return (
-        <AppBar className={classes.root}>
-            <Toolbar className={classes.toolbar}>
-                <Link to="/" className={classes.logoStyle}>
-                    <Typography variant="h4">
-                        🚀 RapidSign 🚀
+        <>
+            <AppBar className={classes.root}>
+                <Toolbar className={classes.toolbar}>
+                    <Link to="/" className={classes.logoStyle}>
+                        <Typography variant="h4">
+                            🚀 RapidSign 🚀
                     </Typography>
-                </Link>
-                <Typography>
-                    {auth && (
-                        <>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleMenu}
-                                color="inherit"
-                            >
-                                <AccountCircle />
-                            </IconButton>
-                            <Menu
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right"
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right"
-                                }}
-                                open={open}
-                                onClose={handleClose}
-                            >
-                                <MenuItem>
-                                    <Link to="/" className={classes.itemMenu}>
-                                        Home
+                    </Link>
+                    <Typography>
+                        {auth && (
+                            <>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: "top",
+                                        horizontal: "right"
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: "top",
+                                        horizontal: "right"
+                                    }}
+                                    open={open}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem>
+                                        <Link to="/" className={classes.itemMenu}>
+                                            Home
                                     </Link>
-                                </MenuItem>
-                                <MenuItem>
-                                    <Link to="/manage" className={classes.itemMenu}>
-                                        Manage
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <Link to="/manage" className={classes.itemMenu}>
+                                            Manage
                                     </Link>
-                                </MenuItem>
-                                <MenuItem className={classes.itemMenu}> 
-                                    <Link to="/login" onClick={handleLogout} className={classes.itemMenu}>
-                                        Log Out
+                                    </MenuItem>
+                                    <MenuItem className={classes.itemMenu}>
+                                        <Link to="/login" onClick={handleLogout} className={classes.itemMenu}>
+                                            Log Out
                                     </Link>
-                                </MenuItem>
-                            </Menu>
-                        </>
-                    )}
-                    {!auth && (
-                        <div style={{ display: "flex" }}>
-                            {/* <Link to="/manage">
+                                    </MenuItem>
+                                </Menu>
+                            </>
+                        )}
+                        {!auth && (
+                            <div style={{ display: "flex" }}>
+                                {/* <Link to="/manage">
                                 <Button className={classes.buttonLayout} style={{backgroundColor: "red"}}> Manage </Button>
                             </Link> */}
-                            <Link to="/login">
-                                <Button className={classes.buttonLayout}> Sign In </Button>
-                            </Link>
-                            <Link to="/register">
-                                <Button className={classes.buttonLayout}> Sign Up </Button>
-                            </Link>
-                        </div>
-                    )}
-                </Typography>
-            </Toolbar>
-        </AppBar>
+                                <Link to="/login">
+                                    <Button className={classes.buttonLayout}> Sign In </Button>
+                                </Link>
+                                <Link to="/register">
+                                    <Button className={classes.buttonLayout}> Sign Up </Button>
+                                </Link>
+                            </div>
+                        )}
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+        </>
     )
 }
 
