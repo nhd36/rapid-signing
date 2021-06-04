@@ -33,16 +33,24 @@ const useStyles = makeStyles({
         borderRadius: "50px",
         color: "white",
     },
-    popover:{
+    popover: {
         padding: "10px",
         height: "50px",
         fontWeight: 900,
-        color:"black"
+        color: "black"
+    },
+    versionList:{
+        border: "1px solid lightgrey",
+        display: "flex",
+        borderRadius: "2px",
+        minWidth: "300px",
+        marginBottom: "20px",
+        textAlign: "right"
     }
 })
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
 
-const DocumentBox = ({ data, triggerParentUpdate}) => {
+const DocumentBox = ({ data, triggerParentUpdate }) => {
 
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -120,20 +128,24 @@ const DocumentBox = ({ data, triggerParentUpdate}) => {
                 <div>
                     Signatures :
                     {data.versions && (
-                        <ol>
-                            {data.versions.map((version, index) =>
-                                <li key={index}>{version.versionId} signed by {version.signedBy}
-                                    <Button
-                                        className={classes.downloadButton}
-                                        style={{ backgroundColor: "blue" }}
-                                        onClick={(e) => downloadFile(version.versionId)}
-                                        startIcon={<GetAppIcon />}
-                                    >
-                                        Download
+                        <div  style={{ display: "flex", flexDirection: "column", maxWidth:"100px" }}>
+                            <ol style={{ color:"white"}}>
+                                {data.versions.map((version, index) =>
+                                <div className={classes.versionList}>
+                                    <li key={index}>{version.versionId} signed by {version.signedBy}
+                                        <Button
+                                            className={classes.downloadButton}
+                                            style={{ backgroundColor: "blue" }}
+                                            onClick={(e) => downloadFile(version.versionId)}
+                                            startIcon={<GetAppIcon />}
+                                        >
+                                            Download
                                     </Button>
-                                </li>
-                            )}
-                        </ol>
+                                    </li>
+                                    </div>
+                                )}
+                            </ol>
+                        </div>
                     )}
                     {data.versions.length === 0 && (
                         <>
