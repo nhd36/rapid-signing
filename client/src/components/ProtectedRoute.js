@@ -1,14 +1,12 @@
 import { Route, Redirect } from "react-router-dom"
 import jwt_decode from "jwt-decode";
 
-const ProtectedRoute = ({ component: Component, token, ...rest }) => {
-    const auth = token !== null ? true : false;
-    // Decode token and get user info and exp
-    const decoded = jwt_decode(token);
+const ProtectedRoute = ({ component: Component, userEmail, ...rest }) => {
+    const auth = userEmail !== null ? true : false;
     return (
         <Route {...rest}
             render={props =>
-                auth ? (<Component {...props} userEmail={decoded.email} />) : (
+                auth ? (<Component {...props} userEmail={userEmail} />) : (
                     <Redirect to={{ pathname: '/login' }} />
                 )}
         />

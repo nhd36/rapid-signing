@@ -11,24 +11,27 @@ import setAuthHeader from "./util/setAuthHeader";
 
 function App() {
   const { token, setToken } = useToken();
-
+  let userEmail = null;
   // Check for token to keep user logged in
   if (sessionStorage.getItem("token")) {
     // Set auth token header auth
-    const token = JSON.parse(sessionStorage.getItem("token"));
+    const sessionToken = JSON.parse(sessionStorage.getItem("token"));
     /* setToken(token);*/
-    setAuthHeader(token);
-
+    console.log(sessionToken)
+    // setToken(sessionToken);
+    setAuthHeader(sessionToken);
     // Decode token and get user info and exp
-    const decoded = jwt_decode(token);
-
+    const decoded = jwt_decode(sessionToken);
+    userEmail = decoded.email;
     // Check for expired token
     const currentTime = Date.now() / 1000; // to get in milliseconds
     if (decoded.exp < currentTime) {
       // Redirect to login
-      setToken(null);
-      window.location.href = "./";
+      sessionStorage.setItem("token", null)
+      window.location.href = "./login";
     }
+  } else {
+    window.location.href = "./login";
   }
 
   return (
@@ -38,14 +41,14 @@ function App() {
           <Route exact path="/">
             <Landing />
           </Route>
-          <ProtectedRoute exact path="/manage" component={Manage} token={token} />
+          <ProtectedRoute exact path="/manage" component={Manage} userEmail={userEmail} />
           <Route exact path="/login">
             <SignIn setToken={setToken} />
           </Route>
           <Route exact path="/register">
             <SignUp />
           </Route>
-          <ProtectedRoute exact path="/:documentId" component={Signature} token={token} />
+          <ProtectedRoute exact path="/:documentId" component={Signature} userEmail={userEmail} />
         </Switch>
       </BrowserRouter>
     </div>
