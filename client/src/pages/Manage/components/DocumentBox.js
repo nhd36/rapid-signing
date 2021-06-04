@@ -169,7 +169,7 @@ const DocumentBox = ({ data }) => {
                         className={classes.customizedButton}
                         style={{ backgroundColor: "blue" }}
                     >
-                        SHARE
+                        SHARE TO SIGN
                 </Button>
                 </Link>
                 <Button
@@ -177,7 +177,7 @@ const DocumentBox = ({ data }) => {
                     style={{ backgroundColor: "blue" }}
                     onClick={(e) => copyLink(e, data._id)}
                 >
-                    Copy Link
+                    COPY LINK
                 </Button>
                 <Popover
                     id={id}
