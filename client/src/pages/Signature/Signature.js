@@ -1,8 +1,10 @@
-import { makeStyles } from "@material-ui/core"
+import { makeStyles, useForkRef } from "@material-ui/core"
 import Layout from "../Layout"
 import { TextField, Box, Typography, Button } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const useStyles = makeStyles({
     root: {
@@ -33,12 +35,78 @@ const useStyles = makeStyles({
     }
 })
 
+let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
+let SERVER_URL_GET_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/document`;
+
 const Signature = () => {
+    console.log("Inside Signature",)
     const classes = useStyles();
+    const [lastVersionId, setLastVersionId] = useState("")
     const { documentId } = useParams();
+    console.log("documentId", documentId)
     const handleClick = async e => {
         e.preventDefault();
     }
+
+
+    const fetchDocument = async (documentId) => {
+        console.log(documentId)
+        var config = {
+            method: 'GET',
+            url: `${SERVER_URL_GET_DOCUMENT}/${documentId}`
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setLastVersionId(response.data.document.lastVersionId)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
+    const downloadFile = () => {
+        console.log("inside")
+        var config = {
+            method: 'GET',
+            url: `${SERVER_URL_GET_FILE}/${lastVersionId}`
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(response)
+                console.log(JSON.stringify(response.data));
+                // Create blob link to download
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data]),
+                );
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute(
+                    'download',
+                    `${lastVersionId}.pdf`,
+                );
+
+                // Append to html link element page
+                document.body.appendChild(link);
+
+                // Start download
+                link.click();
+
+                // Clean up and remove the link
+                link.parentNode.removeChild(link);
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    useEffect(() => {
+        fetchDocument(documentId);
+    }, [documentId]);
+
     return (
         <Layout auth={false}>
 
@@ -72,10 +140,10 @@ const Signature = () => {
                 <br />
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <Button
-                    variant="contained"
-                    color="secondary"
+                        variant="contained"
+                        color="secondary"
                         className={classes.button}
-                        onClick={(e) => handleClick(e)}
+                        onClick={(e) => downloadFile()}
                     >
                         Download
                     </Button>

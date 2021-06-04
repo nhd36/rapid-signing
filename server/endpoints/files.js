@@ -61,6 +61,7 @@ async function uploadSingleFile(req, res) {
         const document = await Document.findById({ _id: ObjectId(req.body.id) });
         if (!document) return res.status(404).send({ success: false, message: "Document doesn't exist. " });
         document.versions.push(req.file.id);
+        document.lastVersionId = req.file.id; // We need to keep track the last version that has been uploaded.
         await document.save();
         return res.json({ success: true, id: req.file.id, file: req.file.originalname, document: document });    
     } catch (err) {

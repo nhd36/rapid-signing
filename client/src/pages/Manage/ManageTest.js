@@ -72,7 +72,7 @@ const Manage = () => {
         e.preventDefault();
     }
 
-    const fethcDocuments = () => {
+    const fetchDocuments = () => {
         var config = {
             method: 'get',
             url: SERVER_URL_FETCH_DOCUMENTS
@@ -80,8 +80,11 @@ const Manage = () => {
 
         axios(config)
             .then(function (response) {
-                let result = JSON.stringify(response.data);
-                setUserDocuments(result['documents']);
+                let result = response.data;
+                console.log("result['documents']", result['documents'])
+                console.log("result", result)
+                console.log("result.documents", result.documents)
+                setUserDocuments(result["documents"]);
             })
             .catch(function (error) {
                 console.log(error);
@@ -126,9 +129,9 @@ const Manage = () => {
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
         // Update the document title using the browser API
-        fethcDocuments();
+        fetchDocuments();
         // console.log(userDocuments)
-    });
+    }, []);
 
 
 
@@ -142,11 +145,11 @@ const Manage = () => {
                             <p>You can see all the documents you created or received here.</p>
                         </div>
                         <div style={{ width: "100%" }}>
-                            {/* {userDocuments.map((documentId, index) => {
+                            {userDocuments.map((data, index) => {
                                 return (
-                                    <DocumentBox data={documentId} id={index} />
+                                    <DocumentBox data={data} id={index} />
                                 )
-                            })} */}
+                            })}
                         </div>
                     </div>
                 </Box>

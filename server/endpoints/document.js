@@ -57,7 +57,8 @@ async function createDocument(req, res) {
                 documentDescription: documentDescription,
                 initialFileId: req.file.id,
                 createdAt: new Date().toISOString(),
-                user: user._id
+                user: user._id,
+                lastVersionId: req.file.id
             })
             await newDocument.save();
             user.documents.push(newDocument._id)
@@ -95,17 +96,16 @@ async function getDocument(req, res) {
  * get documents that belong to a user. Also aggregate the individual versions.
  */
 async function getAllDocuments(req, res) {
-    console.log(req.user)
     // Check if there is an existing user.
     const user = await User.findOne({ email: req.user.email })
     if (!user) return res.status(404).json({ success: false, error: "Email is invalid" });
     const documents = user.documents;
-    let result = {};
-    for (let i=0;i<documents.length;i++){
-        let document = await Document.find({_id: documents[i], user: req.user._id});
-        result[documents[i]] = document.versions;
+    let result = [];
+    for (let i = 0; i < documents.length; i++) {
+        let document = await Document.find({ _id: documents[i]._id, user: req.user._id });
+        result.push(...document); //spread to have a list of objects not list of list of objects.
     }
-    return res.status(200).json({ success: true, documentIds: documents, mapping: result});
+    return res.status(200).json({ success: true, documents: result });
 }
 
 /** 

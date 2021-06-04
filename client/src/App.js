@@ -6,9 +6,33 @@ import { useToken } from './customizedHook/useToken';
 import ProtectedRoute from './components/ProtectedRoute'
 import Landing from "./pages/Landing/Landing";
 import Signature from "./pages/Signature/Signature";
+import jwt_decode from "jwt-decode";
+import setAuthHeader from "./util/setAuthHeader";
 
 function App() {
   const { token, setToken } = useToken();
+
+  // // Check for token to keep user logged in
+  // if (localStorage.getItem("token")) {
+  //   // Set auth token header auth
+  //   const token = JSON.parse(localStorage.getItem("token"));
+  //   setAuthHeader(token)
+  //   // setToken(token);
+
+  //   // Decode token and get user info and exp
+  //   const decoded = jwt_decode(token);
+
+  //   // Check for expired token
+  //   const currentTime = Date.now() / 1000; // to get in milliseconds
+  //   if (decoded.exp < currentTime) {
+  //     // Redirect to login
+  //     // setToken(null);
+  //     window.location.href = "./";
+  //   }
+  // } else {
+  //   // setToken(null);
+  //   window.location.href = "./";
+  // }
 
   console.log("localStorage", localStorage.getItem("token"));
   return (
@@ -25,9 +49,7 @@ function App() {
           <Route exact path="/register">
             <SignUp />
           </Route>
-          <Route path="/:documentId">
-            <Signature />
-          </Route>
+          <ProtectedRoute exact path="/:documentId" component={Signature} token={token} />
         </Switch>
       </BrowserRouter>
     </div>

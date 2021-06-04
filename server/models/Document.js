@@ -28,6 +28,11 @@ const documentSchema = new Schema({
         ref: 'uplaods.files',
         required: true
     },
+    lastVersionId: {
+        type: Schema.Types.ObjectId,
+        ref: 'uplaods.files',
+        required: true
+    },
     versions: [
         {
             type: Schema.Types.ObjectId,
