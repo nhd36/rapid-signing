@@ -50,7 +50,7 @@ function login(req, res) {
                     payload,
                     process.env.SECRET_KEY,
                     {
-                        expiresIn: 900 // 15 min in seconds
+                        expiresIn: 30*24*60*60 // 1 month in seconds
                     },
                     (err, token) => {
                         res.json({
