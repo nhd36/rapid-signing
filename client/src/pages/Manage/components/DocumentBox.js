@@ -126,7 +126,7 @@ const DocumentBox = ({ data }) => {
                     )}
                     {data.versions.length === 0 && (
                         <>
-                            <h4>No signatures found</h4>
+                            <h4>No signatures received</h4>
                         </>
                     )}
                 </div>
