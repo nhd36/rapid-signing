@@ -1,4 +1,4 @@
-import Manage from "./pages/Manage/ManageTest"
+import Manage from "./pages/Manage/Manage"
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SignIn from "./pages/Auth/SignIn/SignIn";
 import SignUp from "./pages/Auth/SignUp/SignUp";
@@ -12,29 +12,25 @@ import setAuthHeader from "./util/setAuthHeader";
 function App() {
   const { token, setToken } = useToken();
 
-  // // Check for token to keep user logged in
-  // if (localStorage.getItem("token")) {
-  //   // Set auth token header auth
-  //   const token = JSON.parse(localStorage.getItem("token"));
-  //   setAuthHeader(token)
-  //   // setToken(token);
+  // Check for token to keep user logged in
+  if (sessionStorage.getItem("token")) {
+    // Set auth token header auth
+    const token = JSON.parse(sessionStorage.getItem("token"));
+    /* setToken(token);*/
+    setAuthHeader(token);
 
-  //   // Decode token and get user info and exp
-  //   const decoded = jwt_decode(token);
+    // Decode token and get user info and exp
+    const decoded = jwt_decode(token);
 
-  //   // Check for expired token
-  //   const currentTime = Date.now() / 1000; // to get in milliseconds
-  //   if (decoded.exp < currentTime) {
-  //     // Redirect to login
-  //     // setToken(null);
-  //     window.location.href = "./";
-  //   }
-  // } else {
-  //   // setToken(null);
-  //   window.location.href = "./";
-  // }
+    // Check for expired token
+    const currentTime = Date.now() / 1000; // to get in milliseconds
+    if (decoded.exp < currentTime) {
+      // Redirect to login
+      setToken(null);
+      window.location.href = "./";
+    }
+  }
 
-  console.log("localStorage", localStorage.getItem("token"));
   return (
     <div className="App">
       <BrowserRouter>

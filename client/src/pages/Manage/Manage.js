@@ -1,141 +1,220 @@
-import React from 'react';
-import NavBar from '../../components/NavBar';
-import "./Manage.css"
+import { makeStyles, Box, TextField, Button, Typography, InputLabel, Input } from "@material-ui/core"
+import Layout from "../Layout"
+import DocumentBox from "./components/DocumentBox";
+import { useState, useEffect } from "react";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 const axios = require("axios");
 
-class Manage extends React.Component {
-    constructor(props) {
-        super(props)
-        this.SERVER_URL = process.env.REACT_APP_SERVER_PATH;
+const useStyles = makeStyles({
+    root: {
+        margin: "5% 0",
+        borderRadius: "50px",
+        width: "100%",
+        justifyContent: "center",
+        border: "2px solid white",
+        color: "white",
+        minWidth: "800px"
+    },
+    contentStyle: {
+        padding: "5%",
+        display: "flex",
+        flexDirection: "column",
+        color: "white",
+        ".MuiInputBase-input": {
+            color: "white"
+        },
+    },
+    uploadFormContainer: {
+        display: "flex",
+        flexDirection: "column",
 
-        this.SERVER_URL_FETCH_FILES = `${this.SERVER_URL}/api/v1/files`;
-        this.SERVER_URL_UPLOAD_FILE = `${this.SERVER_URL}/api/v1/upload`;
-        this.SERVER_URL_GET_FILE = `${this.SERVER_URL}/api/v1/file`;
+    },
 
-
-        const defaultFileType = "pdf";
-        this.uploadSuccessMessage = "Upload successfull!";
-        this.uploadFailureMessage = "Upload failed. Try again later.";
-        this.state = {
-            fileType: defaultFileType,
-            fileDownloadUrl: null,
-            uploadStatusMessage: "No upload",
-            uploadStatus: null,
-            files: []
+    textFieldStyle: {
+        "& .MuiOutlinedInput-input": {
+            color: "red"
         }
-        this.downloadFile = this.downloadFile.bind(this);
-        this.uploadFile = this.uploadFile.bind(this);
-        this.validateSize = this.validateSize.bind(this);
-
+    },
+    customizedButton: {
 
     }
+})
 
-    componentDidMount() {
-        this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES);
+let SERVER_URL_CREATE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/create-document`;
+let SERVER_URL_FETCH_DOCUMENTS = `${process.env.REACT_APP_SERVER_PATH}/api/v1/documents`;
+let SERVER_URL_DELETE_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/delete-document`;
+
+
+const Manage = ({userEmail}) => {
+    const classes = useStyles();
+    const [uploadStatus, setUploadStatus] = useState({ success: false, message: "" })
+    const [uploadedFile, setUploadedFile] = useState({ fileName: "", fileDescription: "", chosenFile: "" });
+    const [userDocuments, setUserDocuments] = useState([]);
+
+
+    // handle change event of the input
+    const handleFormChange = e => {
+        e.persist();
+        setUploadedFile(prevDocument => ({ ...prevDocument, [e.target.name]: e.target.value }));
     }
-    fetchApiToFiles = (apiToFetch) => {
-        fetch(apiToFetch)
-            .then(result => result.json())
-            .then((files) => {
-                this.setState({
-                    ...this.state,
-                    files
-                })
+
+
+    const fetchDocuments = () => {
+        var config = {
+            method: 'get',
+            url: SERVER_URL_FETCH_DOCUMENTS
+        };
+
+        axios(config)
+            .then(function (response) {
+                let result = response.data;
+                setUserDocuments(result["documents"]);
             })
-            .catch((error) => console.log(error));
-    }
+            .catch(function (error) {
+                console.log(error);
+            });
 
-    uploadFile(event) {
-        var file = event.target.files[0];
-        if (this.validateSize(event)) {
-            this.setState({ status: "In progress...." });
+    };
+
+    const uploadFile = (event) => {
+        event.preventDefault();
+        if (uploadedFile.fileDescription === "" ||
+            uploadedFile.fileName === "" ||
+            uploadedFile.chosenFile === "") {
+            setUploadStatus({ success: false, message: "Fields cannot be empty." });
+            return;
+        }
+        var file = uploadedFile.chosenFile;
+        if (validateSize(event)) {
+            setUploadStatus({ success: true, message: "In progress...." });
             // if return true allow to setState
-            const data = new FormData()
-            data.append('file', file)
-            axios.post(this.SERVER_URL_UPLOAD_FILE, data)
+            const data = new FormData();
+            data.append('file', file);
+            data.append('userEmail', userEmail);
+            data.append('documentName', uploadedFile.fileName);
+            data.append('documentDescription', uploadedFile.fileDescription);
+
+            var config = {
+                method: 'post',
+                url: SERVER_URL_CREATE_DOCUMENT,
+                data: data
+            };
+
+            axios(config)
                 .then(res => { // then print response status
-                    this.setState({ uploadStatusMessage: this.uploadSuccessMessage });
-                    this.setState({ uploadStatus: true });
-                    console.log('Upload is successful.', res);
-                    this.fetchApiToFiles(this.SERVER_URL_FETCH_FILES); // get all documents that belong to user
+                    setUploadStatus({ success: true, message: "Upload successfull!" });
+                    alert('Upload is successful.', res);
+                    fetchDocuments(); // get all documents that belong to user
                 })
                 .catch(err => { // then print response status
-                    this.setState({ uploadStatus: `${this.uploadFailureMessage} Reason: ${err}` });
-                    this.setState({ uploadStatus: false });
+                    setUploadStatus({ success: false, message: "Upload failed. Try again later." });
                     console.log('Upload failed', err);
+                    alert(err)
                 })
         }
     }
 
-    validateSize(event) {
-        let file = event.target.files[0];
+    const validateSize = (event) => {
+        //let file = event.target.files[0];
+        let file = uploadedFile;
         let size = 30000;
         let err = '';
-        console.log(file.size);
         if (file.size > size) {
             err = file.type + 'is too large, please pick a smaller file\n';
             console.log(err);
         }
         return true
-    }
+    };
 
-    downloadFile(evt) {
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
+    // Similar to componentDidMount and componentDidUpdate:
+    useEffect(() => {
+        // Update the document title using the browser API
+        fetchDocuments();
+    }, []);
+
+    const selectFile = (event) => {
+        setUploadedFile(prevDocument => ({ ...prevDocument, [event.target.name]: event.target.files[0] }));
+    };
+
+    const deleteDocument = (documentId) => {
+        alert("Deleting document with id:" + documentId);
+        var config = {
+            method: 'delete',
+            url: `${SERVER_URL_DELETE_DOCUMENT}/${documentId}`
         };
-        let fileName = evt.target.fileName;
-        fetch(`${this.SERVER_URL_GET_FILE}/${fileName}/`, requestOptions)
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
+
+        axios(config)
+            .then(function (response) {
+                alert("Document deleted:" + JSON.stringify(response.data))
+                fetchDocuments();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
 
-    render() {
-        return (
+    return (
+        <Layout auth={true}>
             <div>
-                <NavBar auth={true} />
-                <div className="my-documents">
-                    <header className="">
-                        <p> 🚀 RapidSign 🚀<br></br> Blazingly Fast and Secure Document Signing Platform</p>
-                    </header>
-
-                    <h2>My Documents 📝</h2>
-                    <p>You can see all the documents you created or received here.</p>
-                    <table id="my-documents">
-                        <thead>
-                            <tr><th>Name</th><th>Description</th><th>URL</th><th>Created at</th><th>Last Modified</th></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                    <div id="my-documents-list">⚠️ No documents created/received for this user ⚠️</div>
-
-                    <hr className="rounded" />
-                    <h2>Create New Document ✏️</h2>
-                    <p>You can upload a document here so that others can sign it.</p>
-                    <div className="upload-form-container">
-                        <form method="post" action="#" id="#">
-                            <span className="label-holder"><label for="name">File Name:</label></span>
-                            <span className="input-holder"><input type="text" id="name" name="name" placeholder="File Name" /></span>
-
-                            <span className="label-holder"><label for="description">Description:</label></span>
-                            <span className="input-holder"><input type="text" id="description" name="description" placeholder="File Description" /></span>
-
-                            <span className="label-holder"><label for="file">File</label></span>
-                            <span className="input-holder"><input type="file" id="file" name="file" placeholder="Your Document" onChange={this.onChangeHandler} /></span>
-                            {/* <div>
-                        <button width="100%" type="button" onClick={this.fileUploadHandler}>Upload File</button>
-                    </div> */}
-                            <span className="label-holder"><label for="status">Upload Status:</label></span>
-                            <span className="input-holder"><pre className="status">{this.state.status}</pre></span>
-                        </form>
-
+                <Box boxShadow={20} className={classes.root}>
+                    <div className={classes.contentStyle}>
+                        <div style={{ width: "90%" }}>
+                            <h1>My Documents 📝</h1>
+                            <p>You can see all the documents you created or received here.</p>
+                        </div>
+                        <div style={{ width: "100%" }}>
+                            {userDocuments.map((data, index) => {
+                                return (
+                                    <DocumentBox data={data} id={index} triggerParentUpdate={deleteDocument} />
+                                )
+                            })}
+                        </div>
                     </div>
-                </div>
+                </Box>
+                <Box boxShadow={20} className={classes.root}>
+                    <div className={classes.contentStyle}>
+                        <div style={{ width: "90%" }}>
+                            <h1>Create New Document ✏️</h1>
+                            <p>You can upload a document here so that others can sign it.</p>
+                        </div>
+                        <div className={classes.contentStyle}>
+                            <form action="#" id="#" autoComplete="off" onSubmit={e => { uploadFile(e) }}>
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Name:</InputLabel>
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileName" type="text" value={uploadedFile.fileName} onChange={handleFormChange} />
+
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">File Description:</InputLabel>
+                                <Input fullWidth style={{ color: "white" }} id="component-simple" name="fileDescription" type="text" value={uploadedFile.fileDescription} onChange={handleFormChange} />
+
+                                <TextField style={{ color: "white" }}
+                                    name="chosenFile"
+                                    type="file"
+                                    required
+                                    fullWidth
+                                    defaultValue={uploadedFile.chosenFile}
+                                    onChange={selectFile}
+                                />
+                                <br style={{ margin: "5%" }} />
+                                <br />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type="submit"
+                                    className={classes.button}
+                                    startIcon={<CloudUploadIcon />}
+                                >
+                                    Create Document
+                                    </Button>
+                                <br style={{ margin: "5%" }} />
+                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
+                                <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
+                            </form>
+                        </div>
+                    </div>
+                </Box>
             </div>
-        )
-    }
+        </Layout>
+    )
 }
 
 export default Manage;
