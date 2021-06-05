@@ -42,6 +42,16 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+    },
+    exitButton: {
+        borderRadius: "50px",
+        marginBottom: "1em",
+        backgroundColor: "#FFB6C1",
+        fontWeight: 900,
+        minWidth: "40px",
+        position: "absolute",
+        left: "26%",
+        bottom:"65%"
     }
 })
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
@@ -148,7 +158,17 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}>
-
+                                <Button 
+                                    className={classes.exitButton}
+                                    style={{ 
+                                        content: 'x',
+                                        color: "red",
+                                        fontWeight: "300"
+                                    }}
+                                    onClick={() => setVersion(false)}
+                                >
+                                    X
+                                </Button>
                                 <Box style={{
                                     width: "80%",
                                     height: "80%",
