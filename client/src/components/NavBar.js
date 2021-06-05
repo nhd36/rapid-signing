@@ -40,9 +40,8 @@ const useStyles = makeStyles({
         marginRight: "1em",
         fontWeight: 600,
         "&:hover": {
-            backgroundColor: "white",
-            color: 'black',
-            border: "1px solid black"
+            color: "black",
+            backgroundColor: "white"
         }
     },
 })
@@ -101,20 +100,24 @@ const NavBar = ({ auth }) => {
                                     open={open}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem>
-                                        <Link to="/" className={classes.itemMenu}>
-                                            Home
-                                    </Link>
+                                    <MenuItem
+                                        component="button"
+                                        href="/"
+                                        className={classes.itemMenu}
+                                    >
+                                        Home
                                     </MenuItem>
-                                    <MenuItem>
-                                        <Link to="/manage" className={classes.itemMenu}>
-                                            Manage
-                                    </Link>
+                                    <MenuItem
+                                        component="button"
+                                        href="/manage"
+                                        className={classes.itemMenu}
+                                    >
+                                        Manage
                                     </MenuItem>
-                                    <MenuItem className={classes.itemMenu}>
-                                        <Link to="/login" onClick={handleLogout} className={classes.itemMenu}>
-                                            Log Out
-                                    </Link>
+                                    <MenuItem
+                                        onClick={handleLogout}
+                                        className={classes.itemMenu}>
+                                        Log Out
                                     </MenuItem>
                                 </Menu>
                             </>
@@ -124,12 +127,18 @@ const NavBar = ({ auth }) => {
                                 {/* <Link to="/manage">
                                 <Button className={classes.buttonLayout} style={{backgroundColor: "red"}}> Manage </Button>
                             </Link> */}
-                                <Link to="/login">
-                                    <Button className={classes.buttonLayout}> Sign In </Button>
-                                </Link>
-                                <Link to="/register">
-                                    <Button className={classes.buttonLayout}> Sign Up </Button>
-                                </Link>
+                                <Button
+                                    className={classes.buttonLayout}
+                                    href="/login"
+                                >
+                                    Sign In
+                                </Button>
+                                <Button
+                                    className={classes.buttonLayout}
+                                    href="/register"
+                                > Sign Up
+                                </Button>
+
                             </div>
                         )}
                     </Typography>
