@@ -5,6 +5,7 @@ import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
 import { useState } from "react";
 import VersionBox from "./VersionBox"
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles({
     root: {
@@ -143,12 +144,26 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                             <Paper style={{
                                 width: "50vw",
                                 height: "50vh",
-                                borderRadius: "50px",
+                                borderRadius: "10px",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
+                                flexDirection: "column"
                             }}>
-
+                                <Box style={{
+                                    width: "100%",
+                                    padding: "1% 2%",
+                                    display: "flex",
+                                    justifyContent: "flex-end"
+                                }}>
+                                    <Button style={{
+                                        width: "2%",
+                                    }}
+                                        onClick={() => setVersion(false)}
+                                    >
+                                        <CloseIcon />
+                                    </Button>
+                                </Box>
                                 <Box style={{
                                     width: "80%",
                                     height: "80%",
@@ -157,7 +172,7 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                     justifyContent: "center",
                                     alignItems: "center"
                                 }}>
-                                    {data.versions && (
+                                    {data.versions.length > 0 && (
                                         <div style={{ width: "90%" }}>
                                             <ol style={{
                                                 color: "black",
@@ -172,12 +187,10 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                             </ol>
                                         </div>
                                     )}
-                                </Box>
-                                <Box>
                                     {data.versions.length === 0 && (
-                                        <>
-                                            <h4>No signatures received</h4>
-                                        </>
+                                        <Box>
+                                            <h1>No Signatures Found</h1>
+                                        </Box>
                                     )}
                                 </Box>
                             </Paper>
