@@ -4,7 +4,7 @@ import {
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useState } from "react"
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { logout } from "../customizedHook/useToken"
 
 const useStyles = makeStyles({
@@ -59,11 +59,9 @@ const NavBar = ({ auth }) => {
     }
 
     const classes = useStyles();
-    const history = useHistory();
 
     const handleLogout = () => {
         logout();
-        history.push('/login')
     }
     return (
         <>
@@ -115,8 +113,11 @@ const NavBar = ({ auth }) => {
                                         Manage
                                     </MenuItem>
                                     <MenuItem
+                                        component="button"
                                         onClick={handleLogout}
-                                        className={classes.itemMenu}>
+                                        className={classes.itemMenu}
+                                        href="/login"
+                                    >
                                         Log Out
                                     </MenuItem>
                                 </Menu>
