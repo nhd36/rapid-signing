@@ -5,6 +5,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import download from "downloadjs";
 
 const useStyles = makeStyles({
     root: {
@@ -115,36 +116,16 @@ const Signature = () => {
 
 
     const downloadFile = () => {
-        console.log("inside")
         var config = {
             method: 'GET',
-            url: `${SERVER_URL_GET_FILE}/${lastVersionId}`
+            url: `${SERVER_URL_GET_FILE}/${lastVersionId}`,
+            responseType: 'blob'
         };
-
         axios(config)
             .then(function (response) {
-                console.log(response)
-                console.log(JSON.stringify(response.data));
-                // Create blob link to download
-                const url = window.URL.createObjectURL(
-                    new Blob([response.data]),
-                );
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute(
-                    'download',
-                    `${lastVersionId}.pdf`,
-                );
-
-                // Append to html link element page
-                document.body.appendChild(link);
-
-                // Start download
-                link.click();
-
-                // Clean up and remove the link
-                link.parentNode.removeChild(link);
-
+                // Use downloadjs to avoid download issues when PDF format is new like 1.7.
+                // Source: https://stackoverflow.com/questions/64037367/how-to-pipe-a-pdf-download-response-from-an-api-node-express-to-a-client-reac
+                download(response.data, `${lastVersionId}.pdf`, response.headers['content-type'])
             })
             .catch(function (error) {
                 console.log(error);
