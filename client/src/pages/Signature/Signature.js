@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core"
 import Layout from "../Layout"
 import { TextField, Box, Typography, Button, InputLabel } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -38,8 +38,10 @@ const useStyles = makeStyles({
 let SERVER_URL_GET_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/file`;
 let SERVER_URL_GET_DOCUMENT = `${process.env.REACT_APP_SERVER_PATH}/api/v1/document`;
 let SERVER_URL_UPLOAD_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/upload`;
+let SERVER_URL_LOCK_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/lock-document`;
+let SERVER_URL_UNLOCK_FILE = `${process.env.REACT_APP_SERVER_PATH}/api/v1/unlock-document`
 
-const Signature = () => {
+const Signature = ({ userEmail }) => {
     console.log("Inside Signature",)
     const classes = useStyles();
     const [uploadStatus, setUploadStatus] = useState({ success: false, message: "" })
@@ -47,12 +49,61 @@ const Signature = () => {
     const [lastVersionId, setLastVersionId] = useState("")
     const { documentId } = useParams();
 
+    const [code, setCode] = useState(null);
+    const history = useHistory();
+
     const selectFile = (event) => {
         setUploadedFile(prevDocument => ({ ...prevDocument, [event.target.name]: event.target.files[0] }));
     };
 
+    const lockDocument = async (documentId) => {
+        console.log("lock");
+        var config = {
+            method: 'post',
+            url: `${SERVER_URL_LOCK_FILE}/${documentId}`,
+            data: { userEmail }
+        };
+
+        await axios(config)
+            .then(res => { // then print response status
+                setCode(res.data.code);
+                return true;
+            })
+            .catch(err => { // then print response status
+                alert(err.response.data.error);
+                history.push("/manage");
+                return false;
+            })
+    }
+
+    const unlockDocument = async (documentId) => {
+        console.log("unlock");
+        console.log(code);
+        var config = {
+            method: 'post',
+            url: `${SERVER_URL_UNLOCK_FILE}/${documentId}`,
+            data: { code }
+        };
+
+        await axios(config)
+            .then(res => { // then print response status
+                console.log(res);
+                return true;
+            })
+            .catch(err => { // then print response status
+                const response = err.response;
+                console.log(response);
+                if (!response.success) {
+                    return false;
+                }
+                return false;
+            })
+    }
+
     const uploadFile = (event) => {
         event.preventDefault();
+
+
         var file = uploadedFile.chosenFile;
         if (validateSize(event)) {
             setUploadStatus({ success: true, message: "In progress...." });
@@ -73,6 +124,8 @@ const Signature = () => {
                     setUploadStatus({ success: true, message: "Upload successfull!" });
                     console.log('Upload is successful.', res);
                     alert('Upload is successful.', res);
+                    unlockDocument(documentId);
+                    history.push('/manage')
                 })
                 .catch(err => { // then print response status
                     setUploadStatus({ success: false, message: "Upload failed. Try again later." });
@@ -98,19 +151,20 @@ const Signature = () => {
 
 
     const fetchDocument = async (documentId) => {
-        console.log(documentId)
-        var config = {
-            method: 'GET',
-            url: `${SERVER_URL_GET_DOCUMENT}/${documentId}`
-        };
-
-        await axios(config)
-            .then(function (response) {
-                setLastVersionId(response.data.document.lastVersionId)
+        await lockDocument(documentId)
+            .then(res => {
+                var config = {
+                    method: 'GET',
+                    url: `${SERVER_URL_GET_DOCUMENT}/${documentId}`
+                };
+                axios(config)
+                    .then(function (response) {
+                        setLastVersionId(response.data.document.lastVersionId)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             })
-            .catch(function (error) {
-                console.log(error);
-            });
     }
 
 
@@ -215,8 +269,8 @@ const Signature = () => {
                         Upload The Signed Document
                     </Button>
                     <br style={{ margin: "5%" }} />
-                                <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
-                                <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
+                    <InputLabel style={{ color: "white" }} htmlFor="component-simple">Upload Status:</InputLabel>
+                    <Typography style={{ color: uploadStatus.success ? 'green' : 'red' }}>{uploadStatus.message}</Typography>
                 </div>
             </Box>
         </Layout>
