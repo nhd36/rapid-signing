@@ -28,7 +28,7 @@ function App() {
     const currentTime = Date.now() / 1000; // to get in milliseconds
     if (decoded.exp < currentTime) {
       // Redirect to login
-      sessionStorage.setItem("token", null)
+      sessionStorage.removeItem("token", null)
       window.location.href = "./login";
     }
   } 

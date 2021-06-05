@@ -5,9 +5,13 @@ const Schema = mongoose.Schema;
 const documentSchema = new Schema({
     createdAt: String,
     isLocked: {
-        type: Boolean,
+        type: Object,
         required: true,
-        default: false
+        default: {
+            mode: false,
+            lockedBy: null,
+            lockCode: null
+        }
     },
     userEmail: {
         type: String,
