@@ -53,6 +53,7 @@ function login(req, res) {
                         expiresIn: 30*24*60*60 // 1 month in seconds
                     },
                     (err, token) => {
+                        console.log(token)
                         res.json({
                             success: true,
                             accessToken: "Bearer " + token

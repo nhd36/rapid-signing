@@ -158,8 +158,8 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                     alignItems: "center"
                                 }}>
                                     {data.versions && (
-                                        <div style={{width: "90%"}}>
-                                            <ol style={{ 
+                                        <div style={{ width: "90%" }}>
+                                            <ol style={{
                                                 color: "black",
                                                 display: "flex",
                                                 justifyContent: "center",
@@ -167,7 +167,7 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                                                 alignItems: "center"
                                             }}>
                                                 {data.versions.map((version, index) =>
-                                                    <VersionBox key={index} downloadFile={downloadFile} version={version}/>
+                                                    <VersionBox key={index} downloadFile={downloadFile} version={version} />
                                                 )}
                                             </ol>
                                         </div>
@@ -186,34 +186,19 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
                 </div>
             </div>
             <div className={classes.documentButtonBox}>
-                <Link to={"/" + data._id} >
-                    <Button
-                        className={classes.customizedButton}
-                        style={{ backgroundColor: "blue" }}
-                    >
-                        SHARE TO SIGN
-                    </Button>
-                </Link>
+                <Button
+                    className={classes.customizedButton}
+                    style={{ backgroundColor: "blue" }}
+                    href={`/${data._id}`}
+                >
+                    SHARE TO SIGN
+                </Button>
                 <Button
                     className={classes.customizedButton}
                     style={{ backgroundColor: "blue" }}
                     onClick={(e) => copyLink(e, data._id)}
                 >
                     COPY LINK
-                </Button>
-                <Button
-                    className={classes.customizedButton}
-                    style={{ backgroundColor: "blue" }}
-                    onClick={(e) => copyLink(e, data._id)}
-                >
-                    LOCK
-                </Button>
-                <Button
-                    className={classes.customizedButton}
-                    style={{ backgroundColor: "blue" }}
-                    onClick={(e) => copyLink(e, data._id)}
-                >
-                    UNLOCK
                 </Button>
                 <Popover
                     id={id}

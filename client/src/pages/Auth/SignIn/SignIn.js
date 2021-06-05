@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core"
+import { makeStyles, Slide } from "@material-ui/core"
 import AuthLayout from "../AuthLayout"
 import { TextField, Box, Typography, Button } from "@material-ui/core"
 import { useState } from "react"
@@ -32,34 +32,41 @@ const SignIn = ({ setToken }) => {
     const [password, setPassword] = useState();
     const [statusMessage, setStatusMessage] = useState('');
 
-    
-async function loginUser(credentials) {
-    return fetch(`${process.env.REACT_APP_SERVER_PATH}/api/v1/login`, {
-        method: "POST",
-        headers: {
-            'Content-Type': "application/json"
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(data => data.json())
-        .then(response => {
-            if (response.success) {
-                return response.accessToken;
-            }
-            return null;
+    async function loginUser(credentials) {
+        return fetch(`${process.env.REACT_APP_SERVER_PATH}/api/v1/login`, {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(credentials)
         })
-        .catch(error => null);
-}
+            .then(data => data.json())
+            .then(response => {
+                return response;
+            })
+            .catch(error => {
+                return {
+                    success: false,
+                    error: "Server corrupted. Try again!"
+                }
+            });
+    }
 
 
     const handleClick = async e => {
         e.preventDefault();
-        if (!password || !email){
+        if (!password || !email) {
             setStatusMessage("Fields cannot be empty.")
             return false;
         }
-        const token = await loginUser({ email, password });
-        setToken(token);
+        const res = await loginUser({ email, password });
+        if (res.success) {
+            setToken(res.accessToken);
+        } else {
+            setStatusMessage(res.error);
+            sessionStorage.removeItem('token');
+            return;
+        }
         history.push("/manage")
     }
 
@@ -87,7 +94,7 @@ async function loginUser(credentials) {
                 <br />
             </Box>
             {statusMessage && <Alert variant="filled" severity="error">
-                Registration failed. {statusMessage}
+                Sign In Failed. {statusMessage}
             </Alert>
             }
             <Button
@@ -98,7 +105,7 @@ async function loginUser(credentials) {
             </Button>
             <Typography style={{ marginTop: "5%", color: 'black' }}>
                 Not registered yet?
-                    <Link to="/register" style={{backgroundColor:"white"}}> Sign Up Here</Link>
+                    <Link to="/register" style={{ backgroundColor: "white" }}> Sign Up Here</Link>
             </Typography>
         </AuthLayout>
     )

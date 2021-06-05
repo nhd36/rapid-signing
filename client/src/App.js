@@ -4,6 +4,7 @@ import SignIn from "./pages/Auth/SignIn/SignIn";
 import SignUp from "./pages/Auth/SignUp/SignUp";
 import { useToken } from './customizedHook/useToken';
 import ProtectedRoute from './components/ProtectedRoute'
+import RedirectedRoute from './components/RedirectedRoute'
 import Landing from "./pages/Landing/Landing";
 import Signature from "./pages/Signature/Signature";
 import jwt_decode from "jwt-decode";
@@ -40,12 +41,18 @@ function App() {
             <Landing userEmail={userEmail} />
           </Route>
           <ProtectedRoute exact path="/manage" component={Manage} userEmail={userEmail} />
-          <Route exact path="/login">
-            <SignIn setToken={setToken} />
-          </Route>
-          <Route exact path="/register">
-            <SignUp />
-          </Route>
+          <RedirectedRoute 
+            exact path="/login" 
+            component={SignIn} 
+            userEmail={userEmail}
+            setToken={setToken}
+          /> 
+          <RedirectedRoute 
+            exact path="/register" 
+            component={SignUp} 
+            userEmail={userEmail}
+            setToken={setToken}
+          /> 
           <ProtectedRoute exact path="/:documentId" component={Signature} userEmail={userEmail} />
         </Switch>
       </BrowserRouter>
