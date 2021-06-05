@@ -9,7 +9,7 @@ export function useToken () {
         axios.defaults.headers.common["Authorization"] = userToken;
         return userToken;
     }
-
+    console.log(getToken());
     const [token, setToken] = useState(getToken());
 
     const saveToken = userToken => {

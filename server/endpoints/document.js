@@ -1,5 +1,6 @@
 const Document = require('../models/Document')
 const User = require('../models/User')
+const RandomString = require('randomstring')
 
 
 /** 
@@ -82,6 +83,11 @@ async function createDocument(req, res) {
 async function getDocument(req, res) {
     try {
         const document = await Document.findById({ _id: req.params.id });
+        document.isLocked = {
+            mode: document.isLocked.mode,
+            lockedBy: document.isLocked.lockedBy
+        };
+        console.log(document);
         if (!document) return res.status(404).send({ success: false, message: "document doesn't exist. " });
         return res.status(200).send({ success: true, document: document });
     } catch (err) {
@@ -131,11 +137,40 @@ async function deleteDocument(req, res) {
  * /lock-document/:id
  */
 async function lockDocument(req, res) {
-    const updatedDocument = await Document.findOneAndUpdate({ _id: req.params.id }, { isLocked: true }, { new: true })
+    const code = RandomString.generate();
+    const document = await Document.findOne({ _id: req.params.id });
+    if (document.isLocked.mode) {
+        if (req.body.userEmail === document.isLocked.lockedBy) {
+            return res.status(200).json({
+                success: true,
+                message: "Document has been locked",
+                code: document.isLocked.lockCode
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            error: "Document has been locked",
+            code: null
+        });
+    }
+    const updatedDocument = await Document.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+            isLocked: {
+                mode: true, lockedBy: req.body.userEmail, lockCode: code
+            }
+        }, { new: true })
     if (!updatedDocument) {
         return res.status(404).json({ success: false, error: "Document doesn't exist" });
     } else {
-        return res.status(200).json({ success: true, id: updatedDocument._id, message: "Document is locked successfully." })
+        return res.status(200).json(
+            {
+                success: true,
+                id: updatedDocument._id,
+                message: "Document is locked successfully.",
+                code: code
+            }
+        );
     }
 }
 
@@ -144,7 +179,23 @@ async function lockDocument(req, res) {
  * /unlock-document/:id
  */
 async function unlockDocument(req, res) {
-    const updatedDocument = await Document.findOneAndUpdate({ _id: req.params.id }, { isLocked: false }, { new: true })
+    const document = await Document.findOne({ _id: req.params.id });
+    if (!document.isLocked.mode) {
+        return res.status(400).json({ success: false, error: "Document is not being locked" });
+    } else if (document.isLocked.mode && document.isLocked.lockCode !== req.body.code) {
+        return res.status(400).json({
+            success: false,
+            error: `Document is being signed by ${document.isLocked.lockedBy}.`
+        });
+    }
+    const updatedDocument = await Document.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+            isLocked: {
+                mode: false, lockedBy: null, lockCode: null
+            }
+        }, { new: true }
+    );
     if (!updatedDocument) {
         return res.status(404).json({ success: false, error: "Document doesn't exist" });
     } else {
