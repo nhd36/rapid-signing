@@ -43,9 +43,12 @@ const SignUp = () => {
             setStatusMessage("Passwords do not match.")
             return false;
         }
-        const success = await registerUser({ email, password });
-        if (success) {
-            history.push("/login");
+        const res = await registerUser({ email, password });
+        if (res.success) {
+            history.push('/login')
+        } else {
+            setStatusMessage(res.message);
+            return;
         }
     }
 
@@ -59,15 +62,13 @@ const SignUp = () => {
         })
             .then(data => data.json())
             .then(response => {
-                if (response.success) {
-                    setStatusMessage('');
-                    return response.success;
-                }
-                else {
-                    setStatusMessage(response.message);
-                }
+                return response;
             })
-            .catch(error => false);
+            .catch(error => {
+                return {
+                success: false,
+                error: "Server corrupted. Try again!"
+            }});
     }
 
     return (
