@@ -1,5 +1,5 @@
 import { Box, Button, makeStyles, Modal, Paper } from "@material-ui/core";
-import { Link, Prompt } from "react-router-dom";
+import download from "downloadjs";
 import axios from "axios";
 import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
@@ -65,31 +65,14 @@ const DocumentBox = ({ data, triggerParentUpdate }) => {
     const downloadFile = (fileId) => {
         var config = {
             method: 'GET',
-            url: `${SERVER_URL_GET_FILE}/${fileId}`
+            url: `${SERVER_URL_GET_FILE}/${fileId}`,
+            responseType: 'blob'
         };
-
         axios(config)
             .then(function (response) {
-                // Create blob link to download
-                const url = window.URL.createObjectURL(
-                    new Blob([response.data]),
-                );
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute(
-                    'download',
-                    `${fileId}.pdf`,
-                );
-
-                // Append to html link element page
-                document.body.appendChild(link);
-
-                // Start download
-                link.click();
-
-                // Clean up and remove the link
-                link.parentNode.removeChild(link);
-
+                // Use downloadjs to avoid download issues when PDF format is new like 1.7.
+                // Source: https://stackoverflow.com/questions/64037367/how-to-pipe-a-pdf-download-response-from-an-api-node-express-to-a-client-reac
+                download(response.data, `${fileId}.pdf`, response.headers['content-type'])
             })
             .catch(function (error) {
                 console.log(error);

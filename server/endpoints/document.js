@@ -46,7 +46,7 @@ async function createDocument(req, res) {
         if (!user) return res.status(404).json({ success: false, error: "Email is invalid" });
 
         // Check if user already has created document with same name.
-        const document = await Document.find({ documentName: documentName })
+        const document = await Document.find({ documentName: documentName, email: userEmail })
         if (document.length > 0) {
             return res.status(404).json({ success: false, error: 'User already has a document with same name\n Please create a document with unique name' });
         } else {
