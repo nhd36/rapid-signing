@@ -45,13 +45,13 @@ const VersionBox = ({ version, downloadFile, styleButton, key }) => {
                     >
                         Download
                     </Button>
-                    <br/>
+                    {/* <br/>
                     <Button
                         className={styleButton}
                         style={{ backgroundColor: "red" }}
                     >
                         Delete
-                    </Button>
+                    </Button> */}
                 </Box>
 
             </li>
