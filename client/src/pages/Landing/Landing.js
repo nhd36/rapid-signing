@@ -26,7 +26,7 @@ const Landing = ({userEmail}) => {
           <p>Upload your document</p>
           <p>Share the provided link</p>
           <p>The recipient opens the link and signs</p>
-          <p>Gathering multiple signatures<i>is that simple</i></p>
+          <p>Gathering multiple signatures <i>is that simple</i></p>
 
         </div>
       </div>
